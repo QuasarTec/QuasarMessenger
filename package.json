@@ -1,0 +1,11 @@
+{
+  "name": "quasarmessenger",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "https://github.com/hamti2018/QuasarMessenger.git",
+  "author": "https://t.me/hamti06",
+  "license": "MIT",
+  "scripts": {},
+  "dependencies": {},
+  "devDependencies": {}
+}

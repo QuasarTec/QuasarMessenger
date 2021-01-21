@@ -1,0 +1,12 @@
+/dist
+/webapp
+/webapp.asar
+/packages
+/deploys
+/node_modules
+/docker_node_modules
+/pkg/control
+/.hak
+/.yarnrc
+/docker
+/.npmrc
