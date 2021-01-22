@@ -31,4 +31,3 @@ job1:
 
     - run: yarn install
     - run: yarn build
-    
