@@ -25,7 +25,9 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: /QuasarMessenger-desktop/yarn install
-    - run: /QuasarMessenger-desktop/yarn build
-    - run: /QuasarMessenger-web/yarn install
-    - run: /QuasarMessenger-web/yarn build
+    - run: cd /QuasarMessenger-desktop
+     -run: yarn install
+    - run: yarn build
+    - run: cd /QuasarMessenger-web
+    - run: yarn install
+    - run: yarn build
