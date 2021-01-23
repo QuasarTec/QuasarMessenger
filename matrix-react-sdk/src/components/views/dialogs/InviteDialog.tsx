@@ -1305,7 +1305,7 @@ export default class InviteDialog extends React.PureComponent<IInviteDialogProps
                 <div className='mx_InviteDialog_content'>
                     <p className='mx_InviteDialog_helpText'>{helpText}</p>
                     <div className='mx_InviteDialog_addressBar'>
-                        {this._renderEditor(userId)}
+                        {this._renderEditor()}
                         <div className='mx_InviteDialog_buttonAndSpinner'>
                             <AccessibleButton
                                 kind="primary"
