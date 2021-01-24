@@ -33,6 +33,7 @@ const AutoLaunch = require('auto-launch');
 const path = require('path');
 
 const tray = require('./tray');
+const server = require('./server');
 const vectorMenu = require('./vectormenu');
 const webContentsHandler = require('./webcontents-handler');
 const updater = require('./updater');
@@ -927,7 +928,14 @@ app.on('ready', async () => {
             spellcheck: true,
         },
     });
-    mainWindow.loadURL('vector://vector/webapp/');
+
+    let webUrl = 'vector://vector/webapp/';
+
+    if(process.env.NODE_ENV !== 'production'){
+        webUrl = 'http://127.0.0.1:8080/';
+    }
+
+    mainWindow.loadURL(webUrl);
     Menu.setApplicationMenu(vectorMenu);
 
     // Create trayIcon icon
