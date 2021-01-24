@@ -18,6 +18,11 @@
         "address": "https://element.io/help",
         "is_enabled": false
     },
+    "payeer": {
+        "m_shop": "1243198602",
+        "key": "ScaIYu4ZPaWou2y",
+        "language": "ru"
+    },
     "brand_room_id": "!soeZCyfOVPGyOKcKnv:matrix.easy-stars.ru",
     "brand": "Quasar",
     "integrations_ui_url": "https://scalar.vector.im/",
