@@ -33,7 +33,6 @@ const AutoLaunch = require('auto-launch');
 const path = require('path');
 
 const tray = require('./tray');
-const server = require('./server');
 const vectorMenu = require('./vectormenu');
 const webContentsHandler = require('./webcontents-handler');
 const updater = require('./updater');
