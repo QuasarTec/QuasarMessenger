@@ -51,6 +51,7 @@ import { RightPanelPhases } from "../../stores/RightPanelStorePhases";
 import ErrorDialog from "../views/dialogs/ErrorDialog";
 import EditCommunityPrototypeDialog from "../views/dialogs/EditCommunityPrototypeDialog";
 import {UIFeature} from "../../settings/UIFeature";
+import DonationMenu from './DonationMenu'
 
 interface IProps {
     isMinimized: boolean;
@@ -61,6 +62,8 @@ type PartialDOMRect = Pick<DOMRect, "width" | "left" | "top" | "height">;
 interface IState {
     contextMenuPosition: PartialDOMRect;
     isDarkTheme: boolean;
+    isDonationOpened: boolean,
+    donationWarning: String
 }
 
 export default class UserMenu extends React.Component<IProps, IState> {
@@ -75,6 +78,8 @@ export default class UserMenu extends React.Component<IProps, IState> {
         this.state = {
             contextMenuPosition: null,
             isDarkTheme: this.isUserOnDarkTheme(),
+            isDonationOpened: false,
+            donationWarning: ''
         };
 
         OwnProfileStore.instance.on(UPDATE_EVENT, this.onProfileUpdate);
@@ -90,11 +95,28 @@ export default class UserMenu extends React.Component<IProps, IState> {
         this.tagStoreRef = GroupFilterOrderStore.addListener(this.onTagStoreUpdate);
     }
 
+    public componentDidUpdate() {
+        const { donationWarning } = this.state;
+
+        if(this.state.isDonationOpened || donationWarning){
+            DonationMenu(this.setStateByName, donationWarning);
+            
+            this.setState({
+                isDonationOpened: false,
+                donationWarning: ''
+            });
+        }
+    }
+
     public componentWillUnmount() {
         if (this.themeWatcherRef) SettingsStore.unwatchSetting(this.themeWatcherRef);
         if (this.dispatcherRef) defaultDispatcher.unregister(this.dispatcherRef);
         OwnProfileStore.instance.off(UPDATE_EVENT, this.onProfileUpdate);
         this.tagStoreRef.remove();
+    }
+
+    public setStateByName = (data) => {
+        this.setState(data);
     }
 
     private onTagStoreUpdate = () => {
@@ -265,6 +287,12 @@ export default class UserMenu extends React.Component<IProps, IState> {
         showCommunityInviteDialog(CommunityPrototypeStore.instance.getSelectedCommunityId());
         this.setState({contextMenuPosition: null}); // also close the menu
     };
+
+    private onDonationButtonClick = () => {
+        this.setState((state) => {
+            return { isDonationOpened: !state.isDonationOpened }
+        });
+    }
 
     private renderContextMenu = (): React.ReactNode => {
         if (!this.state.contextMenuPosition) return null;
@@ -569,9 +597,19 @@ export default class UserMenu extends React.Component<IProps, IState> {
                             />
                         </span>
                         {name}
+                        <span className="mx_UserMenu_userBalance">40 RUB</span>
                         {buttons}
                     </div>
                 </ContextMenuButton>
+                
+                <div className="mx_UserMenu_row">
+                    <button className="mx_donateButton" 
+                            onClick={ this.onDonationButtonClick }
+                    >
+                        Пополнить баланс
+                    </button>
+                </div>
+
                 {this.renderContextMenu()}
             </React.Fragment>
         );

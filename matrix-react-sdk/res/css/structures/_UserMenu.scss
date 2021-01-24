@@ -66,6 +66,7 @@ limitations under the License.
     .mx_UserMenu_row {
         // Create a row-based flexbox to ensure items stay aligned correctly.
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
 
         .mx_UserMenu_userAvatarContainer {
@@ -129,6 +130,15 @@ limitations under the License.
             }
         }
     }
+}
+
+.mx_donateButton{
+    margin-top: 8px;
+    padding: 6px 10px;
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    background-color: #0DBD8B;
 }
 
 .mx_UserMenu_contextMenu {
