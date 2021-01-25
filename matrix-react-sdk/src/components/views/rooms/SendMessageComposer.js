@@ -80,9 +80,10 @@ export function createMessageContent(model, permalinkCreator, replyToEvent) {
         msgtype: isEmote ? "m.emote" : "m.text",
         body: body,
     };
+
     const formattedBody = htmlSerializeIfNeeded(model, {forceHTML: !!replyToEvent});
+
     if (formattedBody) {
-        content.format = "org.matrix.custom.html";
         content.formatted_body = formattedBody;
     }
 
