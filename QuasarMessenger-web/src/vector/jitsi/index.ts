@@ -212,7 +212,7 @@ function joinConference() { // event handler bound in HTML
         height: "100%",
         parentNode: document.querySelector("#jitsiContainer"),
         roomName: conferenceId,
-        configOverwrite: { defaultLanguage: 'en' },
+        configOverwrite: { defaultLanguage: 'ru' },
         interfaceConfigOverwrite: {
             SHOW_JITSI_WATERMARK: false,
             SHOW_WATERMARK_FOR_GUESTS: false,
