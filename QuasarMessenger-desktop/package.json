@@ -20,7 +20,7 @@
     "build:native": "yarn run hak",
     "build32": "electron-builder --ia32",
     "build64": "electron-builder --x64",
-    "build-target": "electron-builder",
+    "build": "electron-builder",
     "build-windows": "electron-builder -w",
     "build-multi-platform": "electron-builder -mwl",
     "build-linux": "electron-builder -l -w",
