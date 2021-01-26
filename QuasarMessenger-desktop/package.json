@@ -1,10 +1,10 @@
 {
-  "name": "element-desktop",
-  "productName": "Element",
+  "name": "quasar-desktop",
+  "productName": "Quasar",
   "main": "src/electron-main.js",
   "version": "1.7.16",
   "description": "A feature-rich client for Matrix.org",
-  "author": "Element",
+  "author": "Quasar",
   "repository": {
     "type": "git",
     "url": "https://github.com/vector-im/element-desktop"
@@ -39,6 +39,7 @@
   },
   "devDependencies": {
     "asar": "^2.0.1",
+    "electron": "^11.2.0",
     "electron-builder": "^22.7.0",
     "electron-builder-squirrel-windows": "^22.7.0",
     "electron-devtools-installer": "^2.2.4",
@@ -69,14 +70,14 @@
         "from": ".hak/hakModules",
         "to": "node_modules"
       },
-      "src/**"
+      "src/**",
+      "webapp/**"
     ],
     "extraResources": [
       {
         "from": "res/img",
         "to": "img"
-      },
-      "webapp.asar"
+      }
     ],
     "linux": {
       "target": "deb",
@@ -92,7 +93,7 @@
     },
     "win": {
       "target": {
-        "target": "squirrel"
+        "target": "nsis"
       },
       "sign": "scripts/electron_winSign"
     },

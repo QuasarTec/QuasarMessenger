@@ -212,16 +212,19 @@ function joinConference() { // event handler bound in HTML
         height: "100%",
         parentNode: document.querySelector("#jitsiContainer"),
         roomName: conferenceId,
+        configOverwrite: { defaultLanguage: 'en' },
         interfaceConfigOverwrite: {
             SHOW_JITSI_WATERMARK: false,
             SHOW_WATERMARK_FOR_GUESTS: false,
             MAIN_TOOLBAR_BUTTONS: [],
             VIDEO_LAYOUT_FIT: "height",
+            LANG_DETECTION: false
         },
         jwt: jwt,
     };
 
     meetApi = new JitsiMeetExternalAPI(jitsiDomain, options);
+
     if (displayName) meetApi.executeCommand("displayName", displayName);
     if (avatarUrl) meetApi.executeCommand("avatarUrl", avatarUrl);
     if (userId) meetApi.executeCommand("email", userId);

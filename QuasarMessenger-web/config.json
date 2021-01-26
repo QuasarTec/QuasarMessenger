@@ -1,0 +1,67 @@
+{
+    "default_server_config": {
+        "m.homeserver": {
+            "base_url": "https://matrix.easy-stars.ru/",
+            "server_name": "easy-stars.ru"
+        },
+        "m.identity_server": {
+            "base_url": "https://vector.im"
+        }
+    },
+    "disable_custom_urls": false,
+    "disable_guests": false,
+    "disable_login_language_selector": false,
+    "disable_3pid_login": false,
+    "enable_integration_manager": true,
+    "allow_iceserver_fallback": false,
+    "faq_link": {
+        "address": "https://element.io/help",
+        "is_enabled": false
+    },
+    "payeer": {
+        "m_shop": "1243198602",
+        "key": "ScaIYu4ZPaWou2y",
+        "language": "ru"
+    },
+    "brand_room_id": "!soeZCyfOVPGyOKcKnv:matrix.easy-stars.ru",
+    "brand": "Quasar",
+    "integrations_ui_url": "https://scalar.vector.im/",
+    "integrations_rest_url": "https://scalar.vector.im/api",
+    "integrations_widgets_urls": [
+        "https://scalar.vector.im/_matrix/integrations/v1",
+        "https://scalar.vector.im/api",
+        "https://scalar-staging.vector.im/_matrix/integrations/v1",
+        "https://scalar-staging.vector.im/api",
+        "https://scalar-staging.riot.im/scalar/api"
+    ],
+    "bug_report_endpoint_url": "https://element.io/bugreports/submit",
+    "defaultCountryCode": "RU",
+    "showLabsSettings": false,
+    "features": {
+        "feature_new_spinner": false
+    },
+    "default_federate": true,
+    "default_theme": "light",
+    "roomDirectory": {
+        "servers": [
+            "matrix.org"
+        ]
+    },
+    "piwik": {
+        "url": "https://piwik.riot.im/",
+        "whitelistedHSUrls": ["https://matrix.org"],
+        "whitelistedISUrls": ["https://vector.im", "https://matrix.org"],
+        "siteId": 1
+    },
+    "enable_presence_by_hs_url": {
+        "https://matrix.org": false,
+        "https://matrix-client.matrix.org": false
+    },
+    "settingDefaults": {
+        "breadcrumbs": true,
+        "language": "ru"
+    },
+    "jitsi": {
+        "preferredDomain": "jitsi.riot.im"
+    }
+}
