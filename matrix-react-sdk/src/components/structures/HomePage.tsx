@@ -134,6 +134,19 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
     const pageUrl = getHomePageUrl(config);
     const matrixClient = MatrixClientPeg.get();
 
+    const { rooms } = matrixClient.store;
+    const keys = Object.keys(rooms);
+    const firstRoomId = rooms[keys[0]].roomId;
+
+    SettingsStore.setValue(
+        'e2ee.manuallyVerifyAllSessions', 
+        firstRoomId,
+        SettingLevel.DEVICE,
+        config['manuallyVerifyAllSessions']
+    );
+
+    console.log(SettingsStore.getValue('e2ee.manuallyVerifyAllSessions'));
+
     enableIntegrationManager(config);
     allowFallbackICEServer(config, matrixClient);
 
