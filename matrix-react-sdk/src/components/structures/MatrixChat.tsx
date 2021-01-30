@@ -168,6 +168,7 @@ interface IProps { // TODO type things better
 interface IState {
     // the master view we are showing.
     view: Views;
+    isSyncWindowVisible: boolean,
     // What the LoggedInView would be showing if visible
     // eslint-disable-next-line camelcase
     page_type?: PageTypes;
@@ -234,6 +235,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         this.state = {
             view: Views.LOADING,
             collapseLhs: false,
+            isSyncWindowVisible: true,
 
             hideToSRUsers: false,
 
@@ -1960,7 +1962,19 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         } else if (this.state.view === Views.WELCOME) {
             const Welcome = sdk.getComponent('auth.Welcome');
             view = <Welcome />;
-        } else if (this.state.view === Views.REGISTER && SettingsStore.getValue(UIFeature.Registration)) {
+        } 
+        // else if (this.state.view === Views.REGISTER && SettingsStore.getValue(UIFeature.Registration) && this.state.isSyncWindowVisible) {
+        //     const EasyStarsSync = sdk.getComponent('auth.EasyStarsSync');
+
+        //     const removeSyncWindow = () => {
+        //         this.setState({
+        //             isSyncWindowVisible: false
+        //         });
+        //     }
+
+        //     view = <EasyStarsSync removeSyncWindow={ removeSyncWindow }/>;
+        // } 
+        else if (this.state.view === Views.REGISTER && SettingsStore.getValue(UIFeature.Registration)) {
             const Registration = sdk.getComponent('structures.auth.Registration');
             const email = ThreepidInviteStore.instance.pickBestInvite()?.toEmail;
             view = (
@@ -1979,7 +1993,8 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                     {...this.getServerProperties()}
                 />
             );
-        } else if (this.state.view === Views.FORGOT_PASSWORD && SettingsStore.getValue(UIFeature.PasswordReset)) {
+        } 
+        else if (this.state.view === Views.FORGOT_PASSWORD && SettingsStore.getValue(UIFeature.PasswordReset)) {
             const ForgotPassword = sdk.getComponent('structures.auth.ForgotPassword');
             view = (
                 <ForgotPassword

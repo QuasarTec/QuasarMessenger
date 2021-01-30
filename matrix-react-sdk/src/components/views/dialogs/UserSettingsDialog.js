@@ -29,6 +29,7 @@ import PreferencesUserSettingsTab from "../settings/tabs/user/PreferencesUserSet
 import VoiceUserSettingsTab from "../settings/tabs/user/VoiceUserSettingsTab";
 import HelpUserSettingsTab from "../settings/tabs/user/HelpUserSettingsTab";
 import FlairUserSettingsTab from "../settings/tabs/user/FlairUserSettingsTab";
+import UserSyncSettingsTab from "../settings/tabs/user/UserSyncSettingsTab";
 import * as sdk from "../../../index";
 import SdkConfig from "../../../SdkConfig";
 import MjolnirUserSettingsTab from "../settings/tabs/user/MjolnirUserSettingsTab";
@@ -44,6 +45,7 @@ export const USER_SECURITY_TAB = "USER_SECURITY_TAB";
 export const USER_LABS_TAB = "USER_LABS_TAB";
 export const USER_MJOLNIR_TAB = "USER_MJOLNIR_TAB";
 export const USER_HELP_TAB = "USER_HELP_TAB";
+export const USER_SYNC_TAB = "USER_SYNC_TAB"
 
 export default class UserSettingsDialog extends React.Component {
     static propTypes = {
@@ -59,11 +61,11 @@ export default class UserSettingsDialog extends React.Component {
         };
     }
 
-    componentDidMount(): void {
+    componentDidMount(){
         this._mjolnirWatcher = SettingsStore.watchSetting("feature_mjolnir", null, this._mjolnirChanged.bind(this));
     }
 
-    componentWillUnmount(): void {
+    componentWillUnmount(){
         SettingsStore.unwatchSetting(this._mjolnirWatcher);
     }
 
@@ -139,6 +141,12 @@ export default class UserSettingsDialog extends React.Component {
                 <MjolnirUserSettingsTab />,
             ));
         }
+        // tabs.push(new Tab(
+        //     USER_SYNC_TAB,
+        //     _td("Services synchronization"),
+        //     "mx_UserSettingsDialog_syncIcon",
+        //     <UserSyncSettingsTab />,
+        // ));
         tabs.push(new Tab(
             USER_HELP_TAB,
             _td("Help & About"),

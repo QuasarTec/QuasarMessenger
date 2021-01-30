@@ -129,12 +129,14 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
                         }
                     },
                 });
-            } else {
+            } 
+            else {
                 // user can't set an e-mail so don't prompt them to
                 this.doSubmit(ev);
                 return;
             }
-        } else {
+        } 
+        else {
             this.doSubmit(ev);
         }
     };
@@ -449,6 +451,14 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
             onBlur={() => CountlyAnalytics.instance.track("onboarding_registration_password_blur")}
         />;
     }
+
+    // getReferralQuery(){
+    //     const queryString = window.location.search;
+    //     const urlParams = new URLSearchParams(queryString);
+    //     const referral = urlParams.get('referral');
+
+    //     return referral
+    // } 
 
     renderPasswordConfirm() {
         return <Field

@@ -1,7 +1,10 @@
 import Modal from '../../Modal';
 import SdkConfig from '../../SdkConfig';
+import * as sdk from "../../index";
 
 export default function DonationMenu(updateState, warning){
+    const Field = sdk.getComponent('views.elements.Field');
+
     const onSubmit = e => {
         e.preventDefault();
 
@@ -20,7 +23,7 @@ export default function DonationMenu(updateState, warning){
     const donationDialog = () => (
         <form className="mx_DonationMenu" onSubmit={ onSubmit }>
             <h2>Введите сумму пополнения: </h2>
-            <input type="number" name="sum" placeholder="Сумма в долларах"/>
+            <Field label="Сумма в долларах"/>
 
             { warning && <p className="warning">{ warning }</p> }
 

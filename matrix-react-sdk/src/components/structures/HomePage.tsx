@@ -145,8 +145,6 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
         config['manuallyVerifyAllSessions']
     );
 
-    console.log(SettingsStore.getValue('e2ee.manuallyVerifyAllSessions'));
-
     enableIntegrationManager(config);
     allowFallbackICEServer(config, matrixClient);
 

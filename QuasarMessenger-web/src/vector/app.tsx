@@ -70,7 +70,6 @@ function onHashChange(ev: HashChangeEvent) {
 // This will be called whenever the SDK changes screens,
 // so a web page can update the URL bar appropriately.
 function onNewScreen(screen: string, replaceLast = false) {
-    console.log("newscreen " + screen);
     const hash = '#/' + screen;
     lastLocationHashSet = hash;
 
