@@ -340,6 +340,30 @@ limitations under the License.
     }
 }
 
+.mx_start_record_video_button {
+    &::before {
+        background-image: url('$(res)/img/voip/record-on.svg');
+    }
+}
+
+.mx_stop_record_video_button {
+    &::before {
+        background-image: url('$(res)/img/voip/record-off.svg');
+    }
+}
+
+.mx_recording_pause_button {
+    &::before {
+        background-image: url('$(res)/img/voip/pause-recording.svg');
+    }
+}
+
+.mx_recording_resume_button {
+    &::before {
+        background-image: url('$(res)/img/voip/resume-recording.svg');
+    }
+}
+
 .mx_CallView_callControls_button_vidOff {
     &::before {
         background-image: url('$(res)/img/voip/vid-off.svg');
