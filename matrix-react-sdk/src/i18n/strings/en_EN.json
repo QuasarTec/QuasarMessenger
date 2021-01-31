@@ -973,6 +973,7 @@
     "No display name": "No display name",
     "New passwords don't match": "New passwords don't match",
     "Passwords can't be empty": "Passwords can't be empty",
+    "Password can't be shorter than 8 symbols": "Password can't be shorter than 8 symbols",
     "Warning!": "Warning!",
     "Changing password will currently reset any end-to-end encryption keys on all sessions, making encrypted chat history unreadable, unless you first export your room keys and re-import them afterwards. In future this will be improved.": "Changing password will currently reset any end-to-end encryption keys on all sessions, making encrypted chat history unreadable, unless you first export your room keys and re-import them afterwards. In future this will be improved.",
     "Export E2E room keys": "Export E2E room keys",

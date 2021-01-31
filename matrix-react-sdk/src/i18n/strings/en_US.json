@@ -167,6 +167,7 @@
     "Operation failed": "Operation failed",
     "Password": "Password",
     "Passwords can't be empty": "Passwords can't be empty",
+    "Password can't be shorter than 8 symbols": "Password can't be shorter than 8 symbols",
     "Permissions": "Permissions",
     "Phone": "Phone",
     "Please check your email and click on the link it contains. Once this is done, click continue.": "Please check your email and click on the link it contains. Once this is done, click continue.",

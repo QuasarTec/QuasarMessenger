@@ -27,6 +27,7 @@ import * as sdk from "../../../index";
 import Modal from "../../../Modal";
 import PassphraseField from "../auth/PassphraseField";
 import CountlyAnalytics from "../../../CountlyAnalytics";
+import EasyStars from '../../../EasyStars'
 
 const FIELD_OLD_PASSWORD = 'field_old_password';
 const FIELD_NEW_PASSWORD = 'field_new_password';
@@ -65,6 +66,10 @@ export default class ChangePassword extends React.Component {
             } else if (!newPass || newPass.length === 0) {
                 return {
                     error: _t("Passwords can't be empty"),
+                };
+            } else if (newPass.length < 8) {
+                return {
+                    error: _t("Password can't be shorter than 8 symbols"),
                 };
             }
         },
@@ -150,7 +155,14 @@ export default class ChangePassword extends React.Component {
             }
         }, (err) => {
             this.props.onError(err);
-        }).finally(() => {
+        }).finally(async() => {
+            const { userId } = cli.credentials;
+            const { displayName } = cli.store.users[userId];
+
+            EasyStars.postData('quasar/user/change_password', displayName, oldPassword, {
+                new_password: newPassword
+            });
+
             this.setState({
                 phase: ChangePassword.Phases.Edit,
                 oldPassword: "",
@@ -248,8 +260,6 @@ export default class ChangePassword extends React.Component {
     });
 
     onClickChange = async (ev) => {
-        ev.preventDefault();
-
         const allFieldsValid = await this.verifyFieldsBeforeSubmit();
         if (!allFieldsValid) {
             CountlyAnalytics.instance.track("onboarding_registration_submit_failed");

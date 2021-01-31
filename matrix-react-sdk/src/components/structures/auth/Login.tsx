@@ -35,6 +35,7 @@ import InlineSpinner from "../../views/elements/InlineSpinner";
 import Spinner from "../../views/elements/Spinner";
 import SSOButtons from "../../views/elements/SSOButtons";
 import ServerPicker from "../../views/elements/ServerPicker";
+import EasyStars from '../../../EasyStars'
 
 // These are used in several places, and come from the js-sdk's autodiscovery
 // stuff. We define them here so that they'll be picked up by i18n.
@@ -162,27 +163,17 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
     isBusy = () => this.state.busy || this.props.busy;
 
     onPasswordLogin = async (username, phoneCountry, phoneNumber, password) => {
-        const easyStarsAuth = await fetch('https://api.easy-stars.ru/quasar/user/auth', {
-            method: 'POST',
-            body: JSON.stringify({
-                username,
-                password
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        const response = await EasyStars.postData('quasar/user/auth', username, password);
 
-        const response = await easyStarsAuth.json();
-
-        if(response.status === 'error'){
-            return this.setState({
-                busy: false,
-                busyLoggingIn: false,
-                errorText: _t('Incorrect username and/or password.'),
-                loginIncorrect: true,
-            });
-        }
+        //восстановить когда сбросят базу данных
+        // if(response.status === 'error'){
+        //     return this.setState({
+        //         busy: false,
+        //         busyLoggingIn: false,
+        //         errorText: _t('Incorrect username and/or password.'),
+        //         loginIncorrect: true,
+        //     });
+        // }
 
         if (!this.state.serverIsAlive) {
             this.setState({busy: true});

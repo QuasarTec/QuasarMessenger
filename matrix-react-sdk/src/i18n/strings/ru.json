@@ -194,6 +194,7 @@
     "OK": "OK",
     "Only people who have been invited": "Только приглашённые участники",
     "Passwords can't be empty": "Пароли не могут быть пустыми",
+    "Password can't be shorter than 8 symbols": "Пароль не может быть короче восьми символов",
     "Please check your email and click on the link it contains. Once this is done, click continue.": "Проверьте свою электронную почту и нажмите на ссылку в письме. После этого нажмите кнопку Продолжить.",
     "Power level must be positive integer.": "Уровень прав должен быть положительным целым числом.",
     "Profile": "Профиль",
