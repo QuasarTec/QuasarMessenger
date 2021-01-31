@@ -49,7 +49,7 @@ export type LoginFlow = ISSOFlow | IPasswordFlow;
 // TODO: Move this to JS SDK
 /* eslint-disable camelcase */
 interface ILoginParams {
-    identifier?: string;
+    identifier?: any;
     password?: string;
     token?: string;
     device_id?: string;
@@ -165,17 +165,19 @@ export default class Login {
         };
 
         let originalLoginError = null;
-        return sendLoginRequest(
-            this.hsUrl, this.isUrl, 'm.login.password', loginParams,
-        ).catch((error) => {
+        
+        return sendLoginRequest(this.hsUrl, this.isUrl, 'm.login.password', loginParams)
+        .catch((error) => {
             originalLoginError = error;
             if (error.httpStatus === 403) {
                 if (this.fallbackHsUrl) {
                     return tryFallbackHs(originalLoginError);
                 }
             }
+            
             throw originalLoginError;
-        }).catch((error) => {
+        })
+        .catch((error) => {
             console.log("Login failed", error);
             throw error;
         });

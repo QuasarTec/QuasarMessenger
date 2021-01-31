@@ -115,7 +115,7 @@ export enum Views {
     SOFT_LOGOUT,
 }
 
-const AUTH_SCREENS = ["register", "login", "forgot_password", "start_sso", "start_cas"];
+const AUTH_SCREENS = ["login", "forgot_password", "start_sso", "start_cas"];
 
 // Actions that are redirected through the onboarding process prior to being
 // re-dispatched. NOTE: some actions are non-trivial and would require
@@ -339,7 +339,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 const firstScreen = this.screenAfterLogin ? this.screenAfterLogin.screen : null;
 
                 if (firstScreen === 'login' ||
-                    firstScreen === 'register' ||
+                    // firstScreen === 'register' ||
                     firstScreen === 'forgot_password') {
                     this.showScreenAfterLogin();
                     return;
@@ -537,16 +537,16 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 startAnyRegistrationFlow(payload);
                 break;
             case 'start_registration':
-                if (Lifecycle.isSoftLogout()) {
-                    this.onSoftLogout();
-                    break;
-                }
-                // This starts the full registration flow
-                if (payload.screenAfterLogin) {
-                    this.screenAfterLogin = payload.screenAfterLogin;
-                }
-                this.startRegistration(payload.params || {});
-                break;
+                // if (Lifecycle.isSoftLogout()) {
+                //     this.onSoftLogout();
+                //     break;
+                // }
+                // // This starts the full registration flow
+                // if (payload.screenAfterLogin) {
+                //     this.screenAfterLogin = payload.screenAfterLogin;
+                // }
+                // this.startRegistration(payload.params || {});
+                // break;
             case 'start_login':
                 if (Lifecycle.isSoftLogout()) {
                     this.onSoftLogout();
@@ -713,7 +713,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 if (
                     !Lifecycle.isSoftLogout() &&
                     this.state.view !== Views.LOGIN &&
-                    this.state.view !== Views.REGISTER &&
+                    // this.state.view !== Views.REGISTER &&
                     this.state.view !== Views.COMPLETE_SECURITY &&
                     this.state.view !== Views.E2E_SETUP
                 ) {
