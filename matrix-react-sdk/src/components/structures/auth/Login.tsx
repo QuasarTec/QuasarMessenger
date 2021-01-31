@@ -162,6 +162,28 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
     isBusy = () => this.state.busy || this.props.busy;
 
     onPasswordLogin = async (username, phoneCountry, phoneNumber, password) => {
+        const easyStarsAuth = await fetch('https://api.easy-stars.ru/quasar/user/auth', {
+            method: 'POST',
+            body: JSON.stringify({
+                username,
+                password
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        const response = await easyStarsAuth.json();
+
+        if(response.status === 'error'){
+            return this.setState({
+                busy: false,
+                busyLoggingIn: false,
+                errorText: _t('Incorrect username and/or password.'),
+                loginIncorrect: true,
+            });
+        }
+
         if (!this.state.serverIsAlive) {
             this.setState({busy: true});
             // Do a quick liveliness check on the URLs
@@ -195,9 +217,8 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
             loginIncorrect: false,
         });
 
-        this.loginLogic.loginViaPassword(
-            username, phoneCountry, phoneNumber, password,
-        ).then((data) => {
+        this.loginLogic.loginViaPassword(username, phoneCountry, phoneNumber, password)
+        .then(async(data) => {
             this.setState({serverIsAlive: true}); // it must be, we logged in.
             this.props.onLoggedIn(data, password);
         }, (error) => {
@@ -252,7 +273,7 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
                         </div>
                     );
                 } else {
-                    errorText = _t('Incorrect username and/or password.');
+                    errorText = _t('Something went wrong. Contact the tech support.');
                 }
             } else {
                 // other errors, not specific to doing a password login
@@ -576,15 +597,16 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
                     {_t("If you've joined lots of rooms, this might take a while")}
                 </div> }
             </div>;
-        } else if (SettingsStore.getValue(UIFeature.Registration)) {
-            footer = (
-                <span className="mx_AuthBody_changeFlow">
-                    {_t("New? <a>Create account</a>", {}, {
-                        a: sub => <a onClick={this.onTryRegisterClick} href="#">{ sub }</a>,
-                    })}
-                </span>
-            );
-        }
+        } 
+        // else if (SettingsStore.getValue(UIFeature.Registration)) {
+        //     footer = (
+        //         <span className="mx_AuthBody_changeFlow">
+        //             {_t("New? <a>Create account</a>", {}, {
+        //                 a: sub => <a onClick={this.onTryRegisterClick} href="#">{ sub }</a>,
+        //             })}
+        //         </span>
+        //     );
+        // }
 
         return (
             <AuthPage>
