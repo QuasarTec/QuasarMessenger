@@ -31,6 +31,9 @@ import {alwaysAboveLeftOf, alwaysAboveRightOf, ChevronFace, ContextMenuButton} f
 import CallContextMenu from '../context_menus/CallContextMenu';
 import { avatarUrlForMember } from '../../../Avatar';
 import DialpadContextMenu from '../context_menus/DialpadContextMenu';
+import Upload from "../../../../src/ContentMessages"
+import DetectRTC from "detectrtc";
+import RecordRTC from "recordrtc";
 
 interface IProps {
         // The call for us to display
@@ -51,6 +54,8 @@ interface IProps {
         // This is sort of a proxy for a number of things but we currently have no
         // need to control those things separately, so this is simpler.
         pipMode?: boolean;
+    
+        roomId: string;
 }
 
 interface IState {
@@ -62,6 +67,9 @@ interface IState {
     controlsVisible: boolean,
     showMoreMenu: boolean,
     showDialpad: boolean,
+    recorder: RecordRTC.MultiStreamRecorder,
+    recordingPaused: boolean
+
 }
 
 function getFullScreenElement() {
@@ -119,7 +127,15 @@ export default class CallView extends React.Component<IProps, IState> {
             controlsVisible: true,
             showMoreMenu: false,
             showDialpad: false,
+            recorder: null,
+            recordingPaused: false
         }
+
+        this.onClickRecordVideoClick  = this.onClickRecordVideoClick.bind(this);
+        this.stopRecordingVideo       = this.stopRecordingVideo.bind(this);
+        this.startRecordingVideo      = this.startRecordingVideo.bind(this);
+        this.pauseRecordingVideo      = this.pauseRecordingVideo.bind(this);
+        this.addStreamsRecordingVideo = this.addStreamsRecordingVideo.bind(this);
 
         this.updateCallListeners(null, this.props.call);
     }
@@ -273,6 +289,98 @@ export default class CallView extends React.Component<IProps, IState> {
         this.setState({micMuted: newVal});
     }
 
+    private captureAllCameras(callback) {
+        var streams = [];
+        var donotDuplicateDevices = {};
+
+        DetectRTC.load(() => {
+            DetectRTC.videoInputDevices.forEach((device, i) => {
+                navigator.mediaDevices.getUserMedia({
+                    video: {
+                        advanced: [{
+                            deviceId: device.id
+                        }]
+                    },
+                    audio: {
+                        advanced: [{
+                            deviceId: device.id
+                        }]
+                    }
+                }).then((stream) => {
+                    if (!donotDuplicateDevices[device.id]) {
+                        donotDuplicateDevices[device.id] = true;
+        
+                        streams.push(stream);
+                    }
+
+                    if (i == DetectRTC.videoInputDevices.length - 1) {
+                        callback(streams);
+                    }
+                }).catch(function(e) {
+                    console.error(e);
+                });
+            })
+        })
+    }
+
+    public blobToFile(theBlob, fileName){
+        //A Blob() is almost a File() - it's just missing the two properties below which we will add
+        theBlob.lastModifiedDate = new Date();
+        theBlob.name = fileName;
+        return theBlob;
+    }
+
+    private stopRecordingVideo() {
+        if (this.state.recorder === null) {
+            return;
+        }
+        this.setState({ recorder: null })
+        this.state.recorder.stop((blob) => {
+            const upload = new Upload()
+            upload.sendContentListToRoom([this.blobToFile(blob, `Record from ${new Date().toString()}`)], this.props.roomId, MatrixClientPeg.get())
+        });
+    };
+
+    private startRecordingVideo() {
+        var allStreams = []
+        this.captureAllCameras((streams) => {
+            allStreams = streams;
+        })
+        this.setState({
+            recorder: new RecordRTC.MultiStreamRecorder(allStreams, {
+                mimeType: "video/webm"
+            })
+        }, () => {
+            this.state.recorder.record();
+        });
+        
+    }
+
+    private pauseRecordingVideo() {
+        if (this.state.recordingPaused == false) {
+            this.state.recorder.pause();
+            this.setState({ recordingPaused: true })
+        } else {
+            this.state.recorder.resume();
+            this.setState({ recordingPaused: false })
+        }
+    }
+
+
+    private addStreamsRecordingVideo(streams: MediaStream[]) {
+        if (this.state.recorder != null) {
+            this.state.recorder.addStreams(streams);
+        }
+    }
+
+    private onClickRecordVideoClick() {
+        if (this.state.recorder == null) {
+            this.startRecordingVideo()
+        } else {
+            this.stopRecordingVideo()
+        }
+    }
+
     private onVidMuteClick = () => {
         const newVal = !this.state.vidMuted;
 
@@ -401,6 +509,18 @@ export default class CallView extends React.Component<IProps, IState> {
             mx_CallView_callControls_button_vidOff: this.state.vidMuted,
         });
 
+        const recordClasses = classNames({
+            mx_CallView_callControls_button: true,
+            mx_start_record_video_button: this.state.recorder === null,
+            mx_stop_record_video_button: this.state.recorder !== null
+        })
+
+        const recordingPausedClasses = classNames({
+            mx_CallView_callControls_button: true,
+            mx_recording_pause_button: this.state.recordingPaused == false,
+            mx_recording_resume_button: this.state.recordingPaused == true
+        })
+
         // Put the other states of the mic/video icons in the document to make sure they're cached
         // (otherwise the icon disappears briefly when toggled)
         const micCacheClasses = classNames({
@@ -443,6 +563,17 @@ export default class CallView extends React.Component<IProps, IState> {
             isExpanded={this.state.showMoreMenu}
         /> : <div className="mx_CallView_callControls_button mx_CallView_callControls_button_more_hidden" />;
 
+
+        const RecorderButton = this.props.call.type === CallType.Video ? <AccessibleButton
+            className={recordClasses}
+            onClick={this.onClickRecordVideoClick}
+        /> : null;
+        const PauseRecordingButton = this.state.recorder !== null ? <AccessibleButton
+            className={recordingPausedClasses}
+            onClick={this.pauseRecordingVideo}
+        /> : null
+        
+
         // in the near future, the dial pad button will go on the left. For now, it's the nothing button
         // because something needs to have margin-right: auto to make the alignment correct.
         const callControls = <div className={callControlsClasses}>
@@ -458,8 +589,11 @@ export default class CallView extends React.Component<IProps, IState> {
                         action: 'hangup',
                         room_id: this.props.call.roomId,
                     });
+                    this.stopRecordingVideo();
                 }}
             />
+            {RecorderButton}
+            {PauseRecordingButton}
             {vidMuteButton}
             <div className={micCacheClasses} />
             <div className={vidCacheClasses} />
