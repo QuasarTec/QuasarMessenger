@@ -16,7 +16,7 @@ limitations under the License.
 
 import classnames from 'classnames';
 import { MatrixCall } from 'matrix-js-sdk/src/webrtc/call';
-import React, {createRef} from 'react';
+import React, {createRef, Ref} from 'react';
 import SettingsStore from "../../../settings/SettingsStore";
 
 export enum VideoFeedType {
@@ -35,6 +35,10 @@ interface IProps {
     // a callback which is called when the video element is resized
     // due to a change in video metadata
     onResize?: (e: Event) => void,
+
+    getRemoteVideo?: (vid: React.RefObject<HTMLVideoElement>) => void,
+
+    getLocalVideo?: (vid: React.RefObject<HTMLVideoElement>) => void
 }
 
 export default class VideoFeed extends React.Component<IProps> {
@@ -58,8 +62,11 @@ export default class VideoFeed extends React.Component<IProps> {
     private setVideoElement() {
         if (this.props.type === VideoFeedType.Local) {
             this.props.call.setLocalVideoElement(this.vid.current);
+            this.props.getLocalVideo(this.vid);
         } else {
             this.props.call.setRemoteVideoElement(this.vid.current);
+            this.props.getRemoteVideo(this.vid);
+
         }
     }
 

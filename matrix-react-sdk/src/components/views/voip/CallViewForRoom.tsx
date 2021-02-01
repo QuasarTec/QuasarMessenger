@@ -81,7 +81,7 @@ export default class CallViewForRoom extends React.Component<IProps, IState> {
         if (!this.state.call) return null;
 
         return <CallView call={this.state.call} pipMode={false}
-            onResize={this.props.onResize} maxVideoHeight={this.props.maxVideoHeight} roomId={this.props.roomId}
+            onResize={this.props.onResize} maxVideoHeight={this.props.maxVideoHeight}
         />;
     }
 }

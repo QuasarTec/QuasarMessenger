@@ -1,13 +1,10 @@
 /*
 Copyright 2015, 2016 OpenMarket Ltd
 Copyright 2019, 2020 The Matrix.org Foundation C.I.C.
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
     http://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,7 +29,6 @@ import CallContextMenu from '../context_menus/CallContextMenu';
 import { avatarUrlForMember } from '../../../Avatar';
 import DialpadContextMenu from '../context_menus/DialpadContextMenu';
 import Upload from "../../../../src/ContentMessages"
-import DetectRTC from "detectrtc";
 import RecordRTC from "recordrtc";
 
 interface IProps {
@@ -54,8 +50,6 @@ interface IProps {
         // This is sort of a proxy for a number of things but we currently have no
         // need to control those things separately, so this is simpler.
         pipMode?: boolean;
-    
-        roomId: string;
 }
 
 interface IState {
@@ -68,7 +62,9 @@ interface IState {
     showMoreMenu: boolean,
     showDialpad: boolean,
     recorder: RecordRTC.MultiStreamRecorder,
-    recordingPaused: boolean
+    recordingPaused: boolean,
+    remoteStream: MediaStream,
+    localStream: MediaStream
 
 }
 
@@ -128,7 +124,9 @@ export default class CallView extends React.Component<IProps, IState> {
             showMoreMenu: false,
             showDialpad: false,
             recorder: null,
-            recordingPaused: false
+            recordingPaused: false,
+            remoteStream: null,
+            localStream: null
         }
 
         this.onClickRecordVideoClick  = this.onClickRecordVideoClick.bind(this);
@@ -136,6 +134,8 @@ export default class CallView extends React.Component<IProps, IState> {
         this.startRecordingVideo      = this.startRecordingVideo.bind(this);
         this.pauseRecordingVideo      = this.pauseRecordingVideo.bind(this);
         this.addStreamsRecordingVideo = this.addStreamsRecordingVideo.bind(this);
+        this.getRemoteVideo = this.getRemoteVideo.bind(this);
+        this.getLocalVideo = this.getLocalVideo.bind(this);
 
         this.updateCallListeners(null, this.props.call);
     }
@@ -289,38 +289,13 @@ export default class CallView extends React.Component<IProps, IState> {
         this.setState({micMuted: newVal});
     }
 
-    private captureAllCameras(callback) {
-        var streams = [];
-        var donotDuplicateDevices = {};
+    public getRemoteVideo(ref) {
+        this.setState({remoteStream: ref.current.captureStream()})
+    }
 
-        DetectRTC.load(() => {
-            DetectRTC.videoInputDevices.forEach((device, i) => {
-                navigator.mediaDevices.getUserMedia({
-                    video: {
-                        advanced: [{
-                            deviceId: device.id
-                        }]
-                    },
-                    audio: {
-                        advanced: [{
-                            deviceId: device.id
-                        }]
-                    }
-                }).then((stream) => {
-                    if (!donotDuplicateDevices[device.id]) {
-                        donotDuplicateDevices[device.id] = true;
-        
-                        streams.push(stream);
-                    }
+    public getLocalVideo(ref) {
+        this.setState({localStream: ref.current.captureStream()})
 
-                    if (i == DetectRTC.videoInputDevices.length - 1) {
-                        callback(streams);
-                    }
-                }).catch(function(e) {
-                    console.error(e);
-                });
-            })
-        })
     }
 
     public blobToFile(theBlob, fileName){
@@ -337,15 +312,12 @@ export default class CallView extends React.Component<IProps, IState> {
         this.setState({ recorder: null })
         this.state.recorder.stop((blob) => {
             const upload = new Upload()
-            upload.sendContentListToRoom([this.blobToFile(blob, `Record from ${new Date().toString()}`)], this.props.roomId, MatrixClientPeg.get())
+            upload.sendContentListToRoom([this.blobToFile(blob, `Record from ${new Date().toString()}`)], this.props.call.roomId, MatrixClientPeg.get())
         });
     };
 
     private startRecordingVideo() {
-        var allStreams = []
-        this.captureAllCameras((streams) => {
-            allStreams = streams;
-        })
+        var allStreams = [this.state.remoteStream, this.state.localStream]
         this.setState({
             recorder: new RecordRTC.MultiStreamRecorder(allStreams, {
                 mimeType: "video/webm"
@@ -651,10 +623,10 @@ export default class CallView extends React.Component<IProps, IState> {
                 style={{maxHeight: maxVideoHeight}}
             >
                 {onHoldBackground}
-                <VideoFeed type={VideoFeedType.Remote} call={this.props.call} onResize={this.props.onResize}
+                <VideoFeed type={VideoFeedType.Remote} getRemoteVideo={ this.getRemoteVideo } call={this.props.call} onResize={this.props.onResize}
                     maxHeight={maxVideoHeight}
                 />
-                <VideoFeed type={VideoFeedType.Local} call={this.props.call} />
+                <VideoFeed type={VideoFeedType.Local} getLocalVideo={ this.getLocalVideo } call={this.props.call} />
                 {onHoldContent}
                 {callControls}
             </div>;
