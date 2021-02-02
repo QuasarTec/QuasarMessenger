@@ -28,7 +28,7 @@ const argv = require('minimist')(process.argv, {
     alias: {help: "h"},
 });
 
-const {app, ipcMain, powerSaveBlocker, BrowserWindow, Menu, autoUpdater, protocol} = require('electron');
+const {app, ipcMain, powerSaveBlocker, BrowserWindow, Menu, autoUpdater, protocol, shell} = require('electron');
 const AutoLaunch = require('auto-launch');
 const path = require('path');
 
@@ -320,6 +320,10 @@ ipcMain.on('app_onAction', function(ev, payload) {
             }
             break;
     }
+});
+
+ipcMain.on('open_link', (_ev, link) => {
+    shell.openExternal(link);
 });
 
 ipcMain.on('ipcCall', async function(ev, payload) {
@@ -901,7 +905,7 @@ app.on('ready', async () => {
     });
 
     const preloadScript = path.normalize(`${__dirname}/preload.js`);
-   mainWindow = global.mainWindow = new BrowserWindow({
+    mainWindow = global.mainWindow = new BrowserWindow({
         // https://www.electronjs.org/docs/faq#the-font-looks-blurry-what-is-this-and-what-can-i-do
         backgroundColor: '#fff',
 
@@ -915,7 +919,7 @@ app.on('ready', async () => {
         height: mainWindowState.height,
         webPreferences: {
             preload: preloadScript,
-            nodeIntegration: false,
+            nodeIntegration: true,
             //sandbox: true, // We enable sandboxing from app.enableSandbox() above
             enableRemoteModule: false,
             // We don't use this: it's useful for the preload script to
@@ -930,9 +934,9 @@ app.on('ready', async () => {
 
     let webUrl = 'vector://vector/webapp/';
 
-    // if(process.env.NODE_ENV !== 'production'){
-    //     webUrl = 'http://127.0.0.1:8080/';
-    // }
+    if(process.env.NODE_ENV !== 'production'){
+        webUrl = 'http://127.0.0.1:8080/';
+    }
 
     mainWindow.loadURL(webUrl);
     Menu.setApplicationMenu(vectorMenu);

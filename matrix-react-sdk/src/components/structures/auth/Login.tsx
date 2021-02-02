@@ -164,16 +164,15 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
 
     onPasswordLogin = async (username, phoneCountry, phoneNumber, password) => {
         const response = await EasyStars.postData('quasar/user/auth', username, password);
-
-        //восстановить когда сбросят базу данных
-        // if(response.status === 'error'){
-        //     return this.setState({
-        //         busy: false,
-        //         busyLoggingIn: false,
-        //         errorText: _t('Incorrect username and/or password.'),
-        //         loginIncorrect: true,
-        //     });
-        // }
+        
+        if(response.status === 'error'){
+            return this.setState({
+                busy: false,
+                busyLoggingIn: false,
+                errorText: _t('Incorrect username and/or password.'),
+                loginIncorrect: true,
+            });
+        }
 
         if (!this.state.serverIsAlive) {
             this.setState({busy: true});
@@ -210,6 +209,8 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
 
         this.loginLogic.loginViaPassword(username, phoneCountry, phoneNumber, password)
         .then(async(data) => {
+            localStorage.setItem('username', username);
+            
             this.setState({serverIsAlive: true}); // it must be, we logged in.
             this.props.onLoggedIn(data, password);
         }, (error) => {

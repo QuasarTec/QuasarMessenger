@@ -135,24 +135,21 @@ const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
     const matrixClient = MatrixClientPeg.get();
 
     const { rooms } = matrixClient.store;
-    const keys = Object.keys(rooms);
-    const firstRoomId = rooms[keys[0]].roomId;
-
-    SettingsStore.setValue(
-        'e2ee.manuallyVerifyAllSessions', 
-        firstRoomId,
-        SettingLevel.DEVICE,
-        config['manuallyVerifyAllSessions']
-    );
+    const brandRoomId = config.brand_room_id;
 
     enableIntegrationManager(config);
     allowFallbackICEServer(config, matrixClient);
-
-    const isJustRegistered = MatrixClientPeg.currentUserIsJustRegistered();
     
-    if(isJustRegistered){
+    if(!rooms?.[brandRoomId]){
         matrixClient.joinRoom(config.brand_room_id);
     }
+
+    SettingsStore.setValue(
+        'e2ee.manuallyVerifyAllSessions', 
+        brandRoomId,
+        SettingLevel.DEVICE,
+        config['manuallyVerifyAllSessions']
+    );
 
     if (pageUrl) {
         const EmbeddedPage = sdk.getComponent('structures.EmbeddedPage');

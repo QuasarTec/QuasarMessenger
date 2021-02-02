@@ -32,8 +32,8 @@ import CallContextMenu from '../context_menus/CallContextMenu';
 import { avatarUrlForMember } from '../../../Avatar';
 import DialpadContextMenu from '../context_menus/DialpadContextMenu';
 import Upload from "../../../../src/ContentMessages"
-import DetectRTC from "detectrtc";
-import RecordRTC from "recordrtc";
+// import DetectRTC from "detectrtc";
+// import RecordRTC from "recordrtc";
 
 interface IProps {
         // The call for us to display

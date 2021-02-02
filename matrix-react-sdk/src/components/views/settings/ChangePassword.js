@@ -127,6 +127,12 @@ export default class ChangePassword extends React.Component {
     }
 
     _changePassword(cli, oldPassword, newPassword) {
+        const { username } = EasyStars.getDataFromStorage();
+
+        if(!username){
+            return;
+        }
+
         const authDict = {
             type: 'm.login.password',
             identifier: {
@@ -156,10 +162,7 @@ export default class ChangePassword extends React.Component {
         }, (err) => {
             this.props.onError(err);
         }).finally(async() => {
-            const { userId } = cli.credentials;
-            const { displayName } = cli.store.users[userId];
-
-            EasyStars.postData('quasar/user/change_password', displayName, oldPassword, {
+            EasyStars.postData('quasar/user/change_password', username, oldPassword, {
                 new_password: newPassword
             });
 

@@ -81,6 +81,8 @@ import ThreepidInviteStore, { IThreepidInvite, IThreepidInviteWireFormat } from 
 import {UIFeature} from "../../settings/UIFeature";
 import { CommunityPrototypeStore } from "../../stores/CommunityPrototypeStore";
 import DialPadModal from "../views/voip/DialPadModal";
+import EasyStars from '../../EasyStars'
+import crypto from 'crypto-js'
 
 /** constants for MatrixChat.state.view */
 export enum Views {
@@ -339,7 +341,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 const firstScreen = this.screenAfterLogin ? this.screenAfterLogin.screen : null;
 
                 if (firstScreen === 'login' ||
-                    // firstScreen === 'register' ||
+                    firstScreen === 'register' ||
                     firstScreen === 'forgot_password') {
                     this.showScreenAfterLogin();
                     return;
@@ -537,16 +539,16 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 startAnyRegistrationFlow(payload);
                 break;
             case 'start_registration':
-                // if (Lifecycle.isSoftLogout()) {
-                //     this.onSoftLogout();
-                //     break;
-                // }
-                // // This starts the full registration flow
-                // if (payload.screenAfterLogin) {
-                //     this.screenAfterLogin = payload.screenAfterLogin;
-                // }
-                // this.startRegistration(payload.params || {});
-                // break;
+                if (Lifecycle.isSoftLogout()) {
+                    this.onSoftLogout();
+                    break;
+                }
+                // This starts the full registration flow
+                if (payload.screenAfterLogin) {
+                    this.screenAfterLogin = payload.screenAfterLogin;
+                }
+                this.startRegistration(payload.params || {});
+                break;
             case 'start_login':
                 if (Lifecycle.isSoftLogout()) {
                     this.onSoftLogout();
@@ -713,7 +715,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 if (
                     !Lifecycle.isSoftLogout() &&
                     this.state.view !== Views.LOGIN &&
-                    // this.state.view !== Views.REGISTER &&
+                    this.state.view !== Views.REGISTER &&
                     this.state.view !== Views.COMPLETE_SECURITY &&
                     this.state.view !== Views.E2E_SETUP
                 ) {
@@ -1833,11 +1835,23 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             this.accountPasswordTimer = null;
         }, 60 * 5 * 1000);
 
+        const username = localStorage.getItem('username');
+
         // Create and start the client
         await Lifecycle.setLoggedIn(credentials);
 
         const cli = MatrixClientPeg.get();
         const cryptoEnabled = cli.isCryptoEnabled();
+
+        const userData = await EasyStars.postData('quasar/user/get_info', username, password);
+        const id = userData.response.balance.id.toString();
+
+        const encrypted = crypto.AES.encrypt(password, id).toString();
+
+        localStorage.setItem('hash', encrypted);
+        localStorage.setItem('uuid', id);
+        localStorage.setItem('username', username);
+        
         if (!cryptoEnabled) {
             this.onLoggedIn();
         }

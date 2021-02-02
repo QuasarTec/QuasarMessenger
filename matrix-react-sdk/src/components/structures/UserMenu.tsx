@@ -52,6 +52,7 @@ import ErrorDialog from "../views/dialogs/ErrorDialog";
 import EditCommunityPrototypeDialog from "../views/dialogs/EditCommunityPrototypeDialog";
 import {UIFeature} from "../../settings/UIFeature";
 import DonationMenu from './DonationMenu'
+import EasyStars from '../../EasyStars'
 
 interface IProps {
     isMinimized: boolean;
@@ -63,7 +64,10 @@ interface IState {
     contextMenuPosition: PartialDOMRect;
     isDarkTheme: boolean;
     isDonationOpened: boolean,
-    donationWarning: String
+    donationWarning: String,
+    isPasswordInputEnabled: boolean,
+    currency: String,
+    balance: any
 }
 
 export default class UserMenu extends React.Component<IProps, IState> {
@@ -79,7 +83,10 @@ export default class UserMenu extends React.Component<IProps, IState> {
             contextMenuPosition: null,
             isDarkTheme: this.isUserOnDarkTheme(),
             isDonationOpened: false,
-            donationWarning: ''
+            donationWarning: '',
+            isPasswordInputEnabled: false,
+            currency: 'RUB',
+            balance: null
         };
 
         OwnProfileStore.instance.on(UPDATE_EVENT, this.onProfileUpdate);
@@ -89,17 +96,32 @@ export default class UserMenu extends React.Component<IProps, IState> {
         return !!getHomePageUrl(SdkConfig.get());
     }
 
-    public componentDidMount() {
+    public async componentDidMount() {
+        if(!EasyStars.logOutEmptyStorage()){
+            const { username } = EasyStars.getDataFromStorage();
+            const password = EasyStars.decryptPassword();
+
+            const userData = await EasyStars.postData('quasar/user/get_info', username, password);
+            const { rub, usd } = userData.response.balance;
+            
+            this.setState({
+                balance: {
+                    rub,
+                    usd
+                }
+            });
+        }
+
         this.dispatcherRef = defaultDispatcher.register(this.onAction);
         this.themeWatcherRef = SettingsStore.watchSetting("theme", null, this.onThemeChanged);
         this.tagStoreRef = GroupFilterOrderStore.addListener(this.onTagStoreUpdate);
     }
 
-    public componentDidUpdate() {
-        const { donationWarning } = this.state;
+    public componentDidUpdate(_prevProps, prevState) {
+        const { donationWarning, isPasswordInputEnabled, currency } = this.state;
 
-        if(this.state.isDonationOpened || donationWarning){
-            DonationMenu(this.setStateByName, donationWarning);
+        if(this.state.isDonationOpened || donationWarning || currency !== prevState.currency){
+            DonationMenu(this.setStateByName, donationWarning, isPasswordInputEnabled, currency);
             
             this.setState({
                 isDonationOpened: false,
@@ -529,6 +551,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
     };
 
     public render() {
+        const { balance } = this.state;
         const avatarSize = 32; // should match border-radius of the avatar
 
         const userId = MatrixClientPeg.get().getUserId();
@@ -597,10 +620,22 @@ export default class UserMenu extends React.Component<IProps, IState> {
                             />
                         </span>
                         {name}
-                        <span className="mx_UserMenu_userBalance">40 RUB</span>
+
                         {buttons}
                     </div>
                 </ContextMenuButton>
+
+                { balance && 
+                    Object.keys(balance).map(key => {
+                        return(
+                            <div className="mx_UserMenu_row mx_UserMenu_userBalance" key={ key }>
+                                <span>
+                                    { balance[key] + ' ' + key.toUpperCase() }
+                                </span>
+                            </div>
+                        )
+                    })
+                }
                 
                 <div className="mx_UserMenu_row">
                     <button className="mx_donateButton" 
