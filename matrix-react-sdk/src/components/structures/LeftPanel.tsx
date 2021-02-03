@@ -48,6 +48,7 @@ interface IProps {
 interface IState {
     showBreadcrumbs: boolean;
     showGroupFilterPanel: boolean;
+    showRoomList: boolean;
 }
 
 // List of CSS classes which should be included in keyboard navigation within the room list
@@ -72,6 +73,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
         this.state = {
             showBreadcrumbs: BreadcrumbsStore.instance.visible,
             showGroupFilterPanel: SettingsStore.getValue('TagPanel.enableTagPanel'),
+            showRoomList: false
         };
 
         BreadcrumbsStore.instance.on(UPDATE_EVENT, this.onBreadcrumbsUpdate);
@@ -344,7 +346,8 @@ export default class LeftPanel extends React.Component<IProps, IState> {
     private renderHeader(): React.ReactNode {
         return (
             <div className="mx_LeftPanel_userHeader">
-                <UserMenu isMinimized={this.props.isMinimized} />
+                <UserMenu isMinimized={this.props.isMinimized}
+                          showRoomList={ this.showRoomList } />
             </div>
         );
     }
@@ -363,6 +366,12 @@ export default class LeftPanel extends React.Component<IProps, IState> {
                 </IndicatorScrollbar>
             );
         }
+    }
+
+    private showRoomList = () =>{
+        this.setState({
+            showRoomList: true
+        });
     }
 
     private renderSearchExplore(): React.ReactNode {
@@ -415,6 +424,8 @@ export default class LeftPanel extends React.Component<IProps, IState> {
             "mx_AutoHideScrollbar",
         );
 
+        console.log(this.state.showRoomList);
+
         return (
             <div className={containerClasses}>
                 {groupFilterPanel}
@@ -423,7 +434,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
                     {this.renderSearchExplore()}
                     {this.renderBreadcrumbs()}
                     <RoomListNumResults />
-                    <div className="mx_LeftPanel_roomListWrapper">
+                    { this.state.showRoomList && <div className="mx_LeftPanel_roomListWrapper">
                         <div
                             className={roomListClasses}
                             onScroll={this.onScroll}
@@ -434,7 +445,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
                         >
                             {roomList}
                         </div>
-                    </div>
+                    </div> }
                     { !this.props.isMinimized && <LeftPanelWidget onResize={this.onResize} /> }
                 </aside>
             </div>

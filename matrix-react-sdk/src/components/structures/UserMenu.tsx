@@ -56,6 +56,7 @@ import EasyStars from '../../EasyStars'
 
 interface IProps {
     isMinimized: boolean;
+    showRoomList: any;
 }
 
 type PartialDOMRect = Pick<DOMRect, "width" | "left" | "top" | "height">;
@@ -109,7 +110,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
                     rub,
                     usd
                 }
-            });
+            }, () => this.props.showRoomList());
         }
 
         this.dispatcherRef = defaultDispatcher.register(this.onAction);
