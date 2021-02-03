@@ -549,6 +549,7 @@ export default class CallHandler {
                         });
                         return;
                     } else if (members.length === 2) {
+                        console.log(payload);
                         console.info("Place %s call in %s", payload.type, payload.room_id);
 
                         this.placeCall(payload.room_id, payload.type, payload.local_element, payload.remote_element);
@@ -719,7 +720,6 @@ export default class CallHandler {
         );
 
         WidgetUtils.setRoomWidget(roomId, widgetId, WidgetType.JITSI, widgetUrl, 'Jitsi', widgetData).then(() => {
-            console.log('Jitsi widget added');
         }).catch((e) => {
             if (e.errcode === 'M_FORBIDDEN') {
                 Modal.createTrackedDialog('Call Failed', '', ErrorDialog, {

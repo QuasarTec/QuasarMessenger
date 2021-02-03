@@ -73,7 +73,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
         this.state = {
             showBreadcrumbs: BreadcrumbsStore.instance.visible,
             showGroupFilterPanel: SettingsStore.getValue('TagPanel.enableTagPanel'),
-            showRoomList: false
+            showRoomList: true
         };
 
         BreadcrumbsStore.instance.on(UPDATE_EVENT, this.onBreadcrumbsUpdate);
@@ -423,8 +423,6 @@ export default class LeftPanel extends React.Component<IProps, IState> {
             "mx_LeftPanel_actualRoomListContainer",
             "mx_AutoHideScrollbar",
         );
-
-        console.log(this.state.showRoomList);
 
         return (
             <div className={containerClasses}>

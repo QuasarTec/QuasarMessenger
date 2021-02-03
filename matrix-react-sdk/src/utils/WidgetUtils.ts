@@ -280,6 +280,7 @@ export default class WidgetUtils {
         widgetName?: string,
         widgetData?: object,
     ) {
+        console.log(widgetData);
         let content;
 
         const addingWidget = Boolean(widgetUrl);
