@@ -283,10 +283,10 @@ export default class GeneralUserSettingsTab extends React.Component {
         return (
             <div className="mx_SettingsTab_section mx_GeneralUserSettingsTab_accountSection">
                 <span className="mx_SettingsTab_subheading">{_t("Account")}</span>
-                <p className="mx_SettingsTab_subsectionText">
+                {/* <p className="mx_SettingsTab_subsectionText">
                     {passwordChangeText}
                 </p>
-                {passwordChangeForm}
+                {passwordChangeForm} */}
                 {threepidSection}
             </div>
         );

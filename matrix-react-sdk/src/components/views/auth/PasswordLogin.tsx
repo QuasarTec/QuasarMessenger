@@ -412,7 +412,7 @@ export default class PasswordLogin extends React.PureComponent<IProps, IState> {
                 className="mx_Login_forgot"
                 disabled={this.props.busy}
                 kind="link"
-                onClick={this.onForgotPasswordClick}
+                onClick={() => window.ipcRenderer.send('open_link', 'https://easy-stars.ru/')}
             >
                 {_t("Forgot password?")}
             </AccessibleButton>;
