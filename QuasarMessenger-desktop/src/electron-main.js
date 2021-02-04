@@ -23,9 +23,12 @@ limitations under the License.
 // etc.
 
 require('update-electron-app')({
-
-
-    updateInterval: '1 hour'
+    provider: 'github',
+    private: 'true',
+    owner: 'QuasarTec',
+    token: '58933d21453ad59769169eff9234e544372aafec',
+    repo: 'https://github.com/QuasarTec/QuasarMessenger',
+    updateInterval: '1 hour',
     logger: require('electron-log')
 })
 
