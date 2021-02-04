@@ -16,7 +16,7 @@ import {
     isRemoteTrackMuted
 } from '../base/tracks/functions';
 
-import { TILE_ASPECT_RATIO } from './constants';
+import { ASPECT_RATIO_BREAKPOINT, SQUARE_TILE_ASPECT_RATIO, TILE_ASPECT_RATIO } from './constants';
 
 declare var interfaceConfig: Object;
 
@@ -62,11 +62,9 @@ export function shouldRemoteVideosBeVisible(state: Object) {
         participantCount > 2
 
             // Always show the filmstrip when there is another participant to
-            // show and the filmstrip is hovered, or local video is pinned, or
-            // the toolbar is displayed.
+            // show and the  local video is pinned, or the toolbar is displayed.
             || (participantCount > 1
-                && (state['features/filmstrip'].hovered
-                    || state['features/toolbox'].visible
+                && (state['features/toolbox'].visible
                     || ((pinnedParticipant = getPinnedParticipant(state))
                         && pinnedParticipant.local)))
 
@@ -140,14 +138,21 @@ export function calculateThumbnailSizeForTileView({
     columns,
     visibleRows,
     clientWidth,
-    clientHeight
+    clientHeight,
+    disableResponsiveTiles
 }: Object) {
+    let aspectRatio = TILE_ASPECT_RATIO;
+
+    if (!disableResponsiveTiles && clientWidth < ASPECT_RATIO_BREAKPOINT) {
+        aspectRatio = SQUARE_TILE_ASPECT_RATIO;
+    }
+
     const viewWidth = clientWidth - TILE_VIEW_SIDE_MARGINS;
     const viewHeight = clientHeight - TILE_VIEW_SIDE_MARGINS;
     const initialWidth = viewWidth / columns;
-    const aspectRatioHeight = initialWidth / TILE_ASPECT_RATIO;
+    const aspectRatioHeight = initialWidth / aspectRatio;
     const height = Math.floor(Math.min(aspectRatioHeight, viewHeight / visibleRows));
-    const width = Math.floor(TILE_ASPECT_RATIO * height);
+    const width = Math.floor(aspectRatio * height);
 
     return {
         height,

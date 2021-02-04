@@ -326,6 +326,9 @@ var config = {
     // UI
     //
 
+    // Disables responsive tiles.
+    // disableResponsiveTiles: false,
+
     // Hides lobby button
     // hideLobbyButton: false,
 
@@ -351,7 +354,7 @@ var config = {
     // disable1On1Mode: false,
 
     // Default language for the user interface.
-    // defaultLanguage: 'en',
+    defaultLanguage: 'ru',
 
     // Disables profile and the edit of all fields from the profile settings (display name and email)
     // disableProfile: false,
@@ -696,6 +699,8 @@ var config = {
      forceTurnRelay
      hiddenDomain
      ignoreStartMuted
+     websocketKeepAlive
+     websocketKeepAliveUrl
      */
 
     /**

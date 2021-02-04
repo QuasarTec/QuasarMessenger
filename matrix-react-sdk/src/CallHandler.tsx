@@ -152,6 +152,10 @@ export default class CallHandler {
         }
 
         this.checkForPstnSupport(CHECK_PSTN_SUPPORT_ATTEMPTS);
+
+        window.ipcRenderer.on('moderator_left', () => {
+            console.log('moderator left');
+        });
     }
 
     stop() {

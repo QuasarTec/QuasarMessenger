@@ -674,6 +674,8 @@ import views$settings$DevicesPanel from './components/views/settings/DevicesPane
 views$settings$DevicesPanel && (components['views.settings.DevicesPanel'] = views$settings$DevicesPanel);
 import views$settings$DevicesPanelEntry from './components/views/settings/DevicesPanelEntry';
 views$settings$DevicesPanelEntry && (components['views.settings.DevicesPanelEntry'] = views$settings$DevicesPanelEntry);
+import views$settings$E2eAdvancedPanel from './components/views/settings/E2eAdvancedPanel';
+views$settings$E2eAdvancedPanel && (components['views.settings.E2eAdvancedPanel'] = views$settings$E2eAdvancedPanel);
 import views$settings$EventIndexPanel from './components/views/settings/EventIndexPanel';
 views$settings$EventIndexPanel && (components['views.settings.EventIndexPanel'] = views$settings$EventIndexPanel);
 import views$settings$IntegrationManager from './components/views/settings/IntegrationManager';

@@ -17,7 +17,7 @@ import languageDetector from './languageDetector';
  * @public
  * @type {Array<string>}
  */
-export const LANGUAGES = Object.keys(LANGUAGES_RESOURCES);
+export const LANGUAGES: Array<string> = Object.keys(LANGUAGES_RESOURCES);
 
 /**
  * The default language.
@@ -58,6 +58,7 @@ const options = {
 
 i18next
     .use(navigator.product === 'ReactNative' ? {} : I18nextXHRBackend)
+    .use(languageDetector)
     .init(options);
 
 // Add default language which is preloaded from the source code.

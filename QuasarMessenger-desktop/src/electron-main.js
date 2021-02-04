@@ -326,6 +326,10 @@ ipcMain.on('open_link', (_ev, link) => {
     shell.openExternal(link);
 });
 
+ipcMain.on('moderator_left', () => {
+    window.webContents.send('terminate_app');
+});
+
 ipcMain.on('ipcCall', async function(ev, payload) {
     if (!mainWindow) return;
 
@@ -780,11 +784,11 @@ ipcMain.on('seshat', async function(ev, payload) {
 
 app.commandLine.appendSwitch('--enable-usermedia-screen-capturing');
 
-const gotLock = app.requestSingleInstanceLock();
-if (!gotLock) {
-    console.log('Other instance detected: exiting');
-    app.exit();
-}
+// const gotLock = app.requestSingleInstanceLock();
+// if (!gotLock) {
+//     console.log('Other instance detected: exiting');
+//     app.exit();
+// }
 
 // do this after we know we are the primary instance of the app
 protocolInit();

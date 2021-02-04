@@ -123,6 +123,7 @@ JitsiMeetJS.setLogLevel(JitsiMeetJS.logLevels.ERROR);
         - `LAST_N_ENDPOINTS_CHANGED` - last n set was changed (parameters - leavingEndpointIds(array) ids of users leaving lastN, enteringEndpointIds(array) ids of users entering lastN)
         - `CONFERENCE_JOINED` - notifies the local user that he joined the conference successfully. (no parameters)
         - `CONFERENCE_LEFT` - notifies the local user that he left the conference successfully. (no parameters)
+        - `CONFERENCE_UNIQUE_ID_SET` - notifies the local user that the unique id for a meeting has been set. (parameters - meetingId(string))
         - `DTMF_SUPPORT_CHANGED` - notifies if at least one user supports DTMF. (parameters - supports(boolean))
         - `USER_ROLE_CHANGED` - notifies that role of some user changed. (parameters - id(string), role(string))
         - `USER_STATUS_CHANGED` - notifies that status of some user changed. (parameters - id(string), status(string))
@@ -232,6 +233,9 @@ This objects represents the server connection. You can create new `JitsiConnecti
             - `interval` - how often to send ping requests, default: 10000 (10 seconds)
             - `timeout` - the time to wait for ping responses, default: 5000 (5 seconds)
             - `threshold` - how many ping failures will be tolerated before the connection is killed, default: 2
+        7. websocketKeepAlive - (optional) Setting the interval of websocket keepalive GET requests. By default, the value is 1 minute(which means a minute + a minute of jitter).
+           Used for certain deployments where a stick table entry needs to be kept alive we use those GET requests.
+        8. websocketKeepAliveUrl - (optional) Specific Url to use for the websocket keepalive GET requests.
 
 2. `connect(options)` - establish server connection
     - `options` - JS Object with `id` and `password` properties.

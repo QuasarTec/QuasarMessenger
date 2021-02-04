@@ -6,7 +6,7 @@ import configLanguageDetector from './configLanguageDetector';
 import customNavigatorDetector from './customNavigatorDetector';
 
 
-var interfaceConfig;
+declare var interfaceConfig: Object;
 
 /**
  * The ordered list (by name) of language detectors to be utilized as backends
@@ -16,7 +16,6 @@ var interfaceConfig;
  */
 const order = [
     'querystring',
-    'localStorage'
 ];
 
 // Allow i18next to detect the system language reported by the Web browser
@@ -29,7 +28,8 @@ order.push(configLanguageDetector.name);
 /**
  * The singleton language detector for Web.
  */
-const languageDetector = new BrowserLanguageDetector(
+const languageDetector
+    = new BrowserLanguageDetector(
         /* services */ null,
         /* options */ {
             caches: [ 'localStorage' ],

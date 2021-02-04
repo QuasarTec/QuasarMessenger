@@ -117,6 +117,9 @@ JitsiConferenceEventManager.prototype.setupChatRoomListeners = function() {
     this.chatRoomForwarder.forward(XMPPEvents.MUC_JOINED,
         JitsiConferenceEvents.CONFERENCE_JOINED);
 
+    this.chatRoomForwarder.forward(XMPPEvents.MEETING_ID_SET,
+        JitsiConferenceEvents.CONFERENCE_UNIQUE_ID_SET);
+
     // send some analytics events
     chatRoom.addListener(XMPPEvents.MUC_JOINED,
         () => {
@@ -184,6 +187,11 @@ JitsiConferenceEventManager.prototype.setupChatRoomListeners = function() {
     chatRoom.addListener(
         XMPPEvents.BRIDGE_DOWN,
         () => Statistics.sendAnalytics(createBridgeDownEvent()));
+
+    chatRoom.addListener(XMPPEvents.CONNECTION_RESTARTED,
+        jingleSession => {
+            conference._onConferenceRestarted(jingleSession);
+        });
 
     this.chatRoomForwarder.forward(XMPPEvents.RESERVATION_ERROR,
         JitsiConferenceEvents.CONFERENCE_FAILED,
