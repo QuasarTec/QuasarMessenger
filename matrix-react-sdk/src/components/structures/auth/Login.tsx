@@ -163,16 +163,16 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
     isBusy = () => this.state.busy || this.props.busy;
 
     onPasswordLogin = async (username, phoneCountry, phoneNumber, password) => {
-        // const response = await EasyStars.postData('quasar/user/auth', username, password);
+        const response = await EasyStars.postData('quasar/user/auth', username, password);
         
-        // if(response.status === 'error'){
-        //     return this.setState({
-        //         busy: false,
-        //         busyLoggingIn: false,
-        //         errorText: _t('Incorrect username and/or password.'),
-        //         loginIncorrect: true,
-        //     });
-        // }
+        if(response.status === 'error'){
+            return this.setState({
+                busy: false,
+                busyLoggingIn: false,
+                errorText: _t('Incorrect username and/or password.'),
+                loginIncorrect: true,
+            });
+        }
 
         if (!this.state.serverIsAlive) {
             this.setState({busy: true});

@@ -1843,14 +1843,14 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         const cli = MatrixClientPeg.get();
         const cryptoEnabled = cli.isCryptoEnabled();
 
-        // const userData = await EasyStars.postData('quasar/user/get_info', username, password);
-        // const id = userData.response.balance.id.toString();
+        const userData = await EasyStars.postData('quasar/user/get_info', username, password);
+        const id = userData.response.balance.id.toString();
 
-        // const encrypted = crypto.AES.encrypt(password, id).toString();
+        const encrypted = crypto.AES.encrypt(password, id).toString();
 
-        // localStorage.setItem('hash', encrypted);
-        // localStorage.setItem('uuid', id);
-        // localStorage.setItem('username', username);
+        localStorage.setItem('hash', encrypted);
+        localStorage.setItem('uuid', id);
+        localStorage.setItem('username', username);
         
         if (!cryptoEnabled) {
             this.onLoggedIn();

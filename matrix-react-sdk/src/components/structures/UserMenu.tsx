@@ -98,20 +98,20 @@ export default class UserMenu extends React.Component<IProps, IState> {
     }
 
     public async componentDidMount() {
-        // if(!EasyStars.logOutEmptyStorage()){
-        //     const { username } = EasyStars.getDataFromStorage();
-        //     const password = EasyStars.decryptPassword();
+        if(!EasyStars.logOutEmptyStorage()){
+            const { username } = EasyStars.getDataFromStorage();
+            const password = EasyStars.decryptPassword();
 
-        //     const userData = await EasyStars.postData('quasar/user/get_info', username, password);
-        //     const { rub, usd } = userData.response.balance;
+            const userData = await EasyStars.postData('quasar/user/get_info', username, password);
+            const { rub, usd } = userData.response.balance;
             
-        //     this.setState(
-        //         { balance: 
-        //             { rub, usd }
-        //         }, 
-        //         () => this.props.showRoomList()
-        //     );
-        // }
+            this.setState(
+                { balance: 
+                    { rub, usd }
+                }, 
+                () => this.props.showRoomList()
+            );
+        }
 
         this.dispatcherRef = defaultDispatcher.register(this.onAction);
         this.themeWatcherRef = SettingsStore.watchSetting("theme", null, this.onThemeChanged);
