@@ -20,7 +20,7 @@ const order = [
 
 // Allow i18next to detect the system language reported by the Web browser
 // itself.
-interfaceConfig.LANG_DETECTION && order.push(customNavigatorDetector.name);
+// interfaceConfig.LANG_DETECTION && order.push(customNavigatorDetector.name);
 
 // Default use configured language
 order.push(configLanguageDetector.name);
@@ -41,6 +41,6 @@ const languageDetector
 // Add the language detector which looks the language up in the config. Its
 // order has already been established above.
 languageDetector.addDetector(customNavigatorDetector);
-languageDetector.addDetector(configLanguageDetector);
+// languageDetector.addDetector(configLanguageDetector);
 
 export default languageDetector;
