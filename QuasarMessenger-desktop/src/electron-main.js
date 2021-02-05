@@ -22,7 +22,7 @@ limitations under the License.
 // as hooks to tell us when we've been installed/uninstalled
 // etc.
 
-require('update-electron-app')()
+// require('update-electron-app')()
 
 const checkSquirrelHooks = require('./squirrelhooks');
 if (checkSquirrelHooks()) return;

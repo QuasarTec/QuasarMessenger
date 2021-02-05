@@ -152,10 +152,6 @@ export default class CallHandler {
         }
 
         this.checkForPstnSupport(CHECK_PSTN_SUPPORT_ATTEMPTS);
-
-        window.ipcRenderer.on('moderator_left', () => {
-            console.log('moderator left');
-        });
     }
 
     stop() {
@@ -294,6 +290,7 @@ export default class CallHandler {
 
     private setCallListeners(call: MatrixCall) {
         call.on(CallEvent.Error, (err: CallError) => {
+            console.log(err);
             if (!this.matchesCallForThisRoom(call)) return;
 
             Analytics.trackEvent('voip', 'callError', 'error', err.toString());
