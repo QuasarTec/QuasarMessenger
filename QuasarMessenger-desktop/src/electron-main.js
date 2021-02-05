@@ -22,7 +22,11 @@ limitations under the License.
 // as hooks to tell us when we've been installed/uninstalled
 // etc.
 
-require('update-electron-app')()
+require('update-electron-app')({
+  repo: 'github-user/repo',
+  updateInterval: '1 hour',
+  logger: require('electron-log')
+});
 
 const checkSquirrelHooks = require('./squirrelhooks');
 if (checkSquirrelHooks()) return;
