@@ -22,15 +22,7 @@ limitations under the License.
 // as hooks to tell us when we've been installed/uninstalled
 // etc.
 
-require('update-electron-app')({
-    provider: 'github',
-    private: 'true',
-    owner: 'QuasarTec',
-    token: '58933d21453ad59769169eff9234e544372aafec',
-    repo: 'https://github.com/QuasarTec/QuasarMessenger',
-    updateInterval: '1 hour',
-    logger: require('electron-log')
-})
+require('update-electron-app')()
 
 const checkSquirrelHooks = require('./squirrelhooks');
 if (checkSquirrelHooks()) return;
