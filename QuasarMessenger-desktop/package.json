@@ -2,6 +2,7 @@
   "name": "quasar-desktop",
   "productName": "Quasar",
   "main": "src/electron-main.js",
+  "homepage": "http://messenger.easy-stars.ru/",
   "version": "1.7.16.1",
   "description": "A feature-rich client for Matrix.org",
   "author": "Quasar",
@@ -25,7 +26,6 @@
     "build-multi-platform": "electron-builder -mwl",
     "build-linux": "electron-builder -l -w",
     "publish": "electron-builder --publish onTag",
-    "release": "build",
     "docker:setup": "docker build -t element-desktop-dockerbuild dockerbuild",
     "docker:build:native": "scripts/in-docker.sh yarn run hak",
     "docker:build": "scripts/in-docker.sh yarn run build",
@@ -102,9 +102,16 @@
       "target": {
         "target": "nsis"
       },
-      "publish": [
-        "github"
-      ],
+      "publish": {
+        "provider": "github",
+        "repo": "https://github.com/QuasarTec/QuasarMessenger/tree/master/QuasarMessenger-desktop",
+	"owner": "QuasarTec",
+	"vPrefixedTagName": "false",
+	"host": "github.com",
+	"protocol": "https",
+	"private": "true",
+	"releaseType": "release"
+      },
       "sign": "scripts/electron_winSign"
     },
     "directories": {

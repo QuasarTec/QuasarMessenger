@@ -24,8 +24,8 @@ limitations under the License.
 
 // Autoupdate
 
-const { autoUpdater } = require("electron-updater")
-
+const { autoUpdater } = require("electron-updater");
+autoUpdater.checkForUpdatesAndNotify();
 
 // End Autoupdate
 
