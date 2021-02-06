@@ -37,7 +37,7 @@ const argv = require('minimist')(process.argv, {
     alias: {help: "h"},
 });
 
-const {app, ipcMain, powerSaveBlocker, BrowserWindow, Menu, autoUpdater, protocol, shell} = require('electron');
+const {app, ipcMain, powerSaveBlocker, BrowserWindow, Menu, protocol, shell} = require('electron');
 const AutoLaunch = require('auto-launch');
 const path = require('path');
 
