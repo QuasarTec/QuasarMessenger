@@ -22,42 +22,6 @@ limitations under the License.
 // as hooks to tell us when we've been installed/uninstalled
 // etc.
 
-//Autoupdater
-autoUpdater.channel = 'latest'
-autoUpdater.allowDowngrade = false
-
-autoUpdater.logger = logger
-autoUpdater.logger.transports.file.level = 'silly'
-autoUpdater.logger.transports.file.appName = 'private repo'
-autoUpdater.autoDownload = true
-
-autoUpdater.on('update-downloaded', () => {
-  dialog.showMessageBox({
-    message: 'update Downloaded !!'
-  })
-})
-
-autoUpdater.on('checking-for-update', () => {
-  dialog.showMessageBox({
-    message: 'CHECKING FOR UPDATES !!'
-  })
-})
-
-autoUpdater.on('update-available', () => {
-  dialog.showMessageBox({
-    message: ' update-available !!'
-  })
-})
-
-autoUpdater.on('error', (error) => {
-  autoUpdater.logger.debug(error)
-})
-
-app.on('ready', () => {
-  if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
-})
-//Autoupdater end
-
 const checkSquirrelHooks = require('./squirrelhooks');
 if (checkSquirrelHooks()) return;
 
