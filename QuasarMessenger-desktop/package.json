@@ -2,7 +2,7 @@
   "name": "quasar-desktop",
   "productName": "Quasar",
   "main": "src/electron-main.js",
-  "version": "1.7.16",
+  "version": "1.7.16.1",
   "description": "A feature-rich client for Matrix.org",
   "author": "Quasar",
   "repository": {
@@ -102,7 +102,9 @@
       "target": {
         "target": "nsis"
       },
-      "publish": ["github"],
+      "publish": [
+        "github"
+      ],
       "sign": "scripts/electron_winSign"
     },
     "directories": {
