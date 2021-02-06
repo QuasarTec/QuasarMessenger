@@ -22,6 +22,14 @@ limitations under the License.
 // as hooks to tell us when we've been installed/uninstalled
 // etc.
 
+// Autoupdate
+
+const { autoUpdater } = require("electron-updater")
+
+
+// End Autoupdate
+
+
 const checkSquirrelHooks = require('./squirrelhooks');
 if (checkSquirrelHooks()) return;
 
