@@ -1046,14 +1046,6 @@ class Toolbox extends Component<Props, State> {
                     key = 'fullscreen'
                     onClick = { this._onToolbarToggleFullScreen }
                     text = { _fullScreen ? t('toolbar.exitFullScreen') : t('toolbar.enterFullScreen') } />,
-            this._shouldShowButton('livestreaming')
-                && <LiveStreamButton
-                    key = 'livestreaming'
-                    showLabel = { true } />,
-            this._shouldShowButton('recording')
-                && <RecordButton
-                    key = 'record'
-                    showLabel = { true } />,
             this._shouldShowButton('sharedvideo')
                 && <OverflowMenuItem
                     accessibilityLabel = { t('toolbar.accessibilityLabel.sharedvideo') }
@@ -1368,11 +1360,7 @@ class Toolbox extends Component<Props, State> {
                     { this._renderVideoButton() }
                 </div>
                 <div className = 'button-group-right'>
-                    { buttonsRight.indexOf('localrecording') !== -1
-                        && <LocalRecordingButton
-                            onClick = {
-                                this._onToolbarOpenLocalRecordingInfoDialog
-                            } />
+                    { <LocalRecordingButton/>
                     }
                     { buttonsRight.indexOf('tileview') !== -1
                         && <TileViewButton /> }

@@ -485,6 +485,10 @@ export default class MessageComposer extends React.Component {
                     <ReplyPreview permalinkCreator={this.props.permalinkCreator} />
                     <div className="mx_MessageComposer_row">
                         { controls }
+                        <canvas style={{ position: 'absolute', left: '10000px', display: 'none' }} 
+                                id="blackCamera" 
+                                width="640" 
+                                height="360" />
                     </div>
                 </div>
             </div>

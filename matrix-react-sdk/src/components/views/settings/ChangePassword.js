@@ -162,9 +162,9 @@ export default class ChangePassword extends React.Component {
         }, (err) => {
             this.props.onError(err);
         }).finally(async() => {
-            EasyStars.postData('quasar/user/change_password', username, oldPassword, {
-                new_password: newPassword
-            });
+            // EasyStars.postData('quasar/user/change_password', username, oldPassword, {
+            //     new_password: newPassword
+            // });
 
             this.setState({
                 phase: ChangePassword.Phases.Edit,

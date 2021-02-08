@@ -21,22 +21,22 @@ export default async function DonationMenu(updateState, warning, isInputEnabled,
                 donationWarning: "Сумма должна быть не меньше, чем 1."
             });
         }
-        else{
-            if(EasyStars.logOutEmptyStorage()){
-                dialog.close();
-                return;
-            }
+        // else{
+        //     if(EasyStars.logOutEmptyStorage()){
+        //         dialog.close();
+        //         return;
+        //     }
 
-            const { username } = EasyStars.getDataFromStorage();
-            const password = EasyStars.decryptPassword();
+        //     const { username } = EasyStars.getDataFromStorage();
+        //     const password = EasyStars.decryptPassword();
 
-            const payment = await EasyStars.postData('quasar/payeer/get_pay_link', username, password, {
-                m_amount: value,
-                m_curr: currentCurrency
-            });
+        //     const payment = await EasyStars.postData('quasar/payeer/get_pay_link', username, password, {
+        //         m_amount: value,
+        //         m_curr: currentCurrency
+        //     });
 
-            window.ipcRenderer.send('open_link', payment.response.link);
-        }
+        //     window.ipcRenderer.send('open_link', payment.response.link);
+        // }
     }
 
     const donationDialog = () => (

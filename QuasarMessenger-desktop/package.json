@@ -2,12 +2,13 @@
   "name": "quasar-desktop",
   "productName": "Quasar",
   "main": "src/electron-main.js",
-  "version": "1.7.16",
+  "homepage": "http://messenger.easy-stars.ru/",
+  "version": "1.7.17",
   "description": "A feature-rich client for Matrix.org",
   "author": "Quasar",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vector-im/element-desktop"
+    "url": "https://github.com/QuasarTec/QuasarMessenger/tree/master/QuasarMessenger-desktop"
   },
   "license": "Apache-2.0",
   "files": [],
@@ -24,6 +25,7 @@
     "build-windows": "electron-builder -w",
     "build-multi-platform": "electron-builder -mwl",
     "build-linux": "electron-builder -l -w",
+    "publish": "electron-builder --publish onTag",
     "docker:setup": "docker build -t element-desktop-dockerbuild dockerbuild",
     "docker:build:native": "scripts/in-docker.sh yarn run hak",
     "docker:build": "scripts/in-docker.sh yarn run build",
@@ -35,18 +37,18 @@
   "dependencies": {
     "auto-launch": "^5.0.1",
     "electron-log": "^4.3.1",
+    "electron-osx-sign": "^0.5.0",
     "electron-store": "^2.0.0",
+    "electron-updater": "^4.3.5",
     "electron-window-state": "^4.1.0",
     "minimist": "^1.2.3",
     "png-to-ico": "^2.1.0",
-    "request": "^2.88.2",
-    "update-electron-app": "^2.0.1"
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "asar": "^2.0.1",
     "electron": "^11.2.0",
     "electron-builder": "^22.7.0",
-    "electron-builder-squirrel-windows": "^22.7.0",
     "electron-devtools-installer": "^2.2.4",
     "electron-notarize": "^0.2.0",
     "eslint": "7.3.1",
@@ -99,6 +101,16 @@
     "win": {
       "target": {
         "target": "nsis"
+      },
+      "publish": {
+        "provider": "github",
+        "repo": "https://github.com/QuasarTec/QuasarMessenger/tree/master/QuasarMessenger-desktop",
+        "owner": "QuasarTec",
+        "vPrefixedTagName": "false",
+        "host": "github.com",
+        "protocol": "https",
+        "private": "true",
+        "releaseType": "release"
       },
       "sign": "scripts/electron_winSign"
     },
