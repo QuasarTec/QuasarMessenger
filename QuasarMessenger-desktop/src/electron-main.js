@@ -949,7 +949,7 @@ app.on('ready', async () => {
 
     let webUrl = 'vector://vector/webapp/';
 
-    if(process.env.NODE_ENV !== 'production'){
+    if(!app.isPackaged){
         webUrl = 'http://127.0.0.1:8080/';
     }
 
