@@ -11,6 +11,7 @@ import { ToolbarButton } from '../../toolbox/components/web';
 
 import RecordRTC from "recordrtc"
 import { saveAs } from 'file-saver';
+import { indexOf } from 'lodash';
 
 /**
  * The type of the React {@code Component} state of
@@ -87,10 +88,15 @@ class LocalRecordingButton extends Component<Props, State> {
 
     findStreams() {
         var streams = [];
+        var streams_ids = [];
         var videoElements = document.getElementsByTagName("video");
-    
+        
         for (let i = 0; i < videoElements.length; i++) {
-            streams.push(videoElements[i].captureStream())
+            if (streams_ids.indexOf(videoElements[i].captureStream().id) == -1) {
+                let stream = videoElements[i].captureStream();
+                streams.push(stream);
+                streams_ids.push(stream.id);
+            }
         }
 
         return streams
