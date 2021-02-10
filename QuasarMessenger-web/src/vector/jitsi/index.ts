@@ -229,6 +229,19 @@ function joinConference() { // event handler bound in HTML
     if (avatarUrl) meetApi.executeCommand("avatarUrl", avatarUrl);
     if (userId) meetApi.executeCommand("email", userId);
 
+    const uploadVideoFromJItsi = (event) => {
+        if (event.data.blob) {
+            console.log('Get message from jitsi');
+            window.parent.postMessage({
+                blob: event.data.blob
+            }, "*");
+            console.log('Send message from jitsi.html')
+
+        }
+    }
+
+    window.addEventListener("message", uploadVideoFromJItsi);
+
     meetApi.on("readyToClose", () => {
         switchVisibleContainers();
 

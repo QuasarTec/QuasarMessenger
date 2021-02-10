@@ -947,9 +947,9 @@ app.on('ready', async () => {
 
     let webUrl = 'vector://vector/webapp/';
 
-    if(!app.isPackaged){
-        webUrl = 'http://127.0.0.1:8080/';
-    }
+    //if(!app.isPackaged){
+    //    webUrl = 'http://127.0.0.1:8080/';
+    //}
 
     mainWindow.loadURL(webUrl);
     Menu.setApplicationMenu(vectorMenu);

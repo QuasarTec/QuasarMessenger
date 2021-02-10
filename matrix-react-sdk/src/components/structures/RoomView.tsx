@@ -79,6 +79,10 @@ import Notifier from "../../Notifier";
 import {showToast as showNotificationsToast} from "../../toasts/DesktopNotificationsToast";
 import { RoomNotificationStateStore } from "../../stores/notifications/RoomNotificationStateStore";
 
+import Upload from "../../ContentMessages";
+import {MatrixClientPeg} from '../../MatrixClientPeg';
+
+
 const DEBUG = false;
 let debuglog = function(msg: string) {};
 
@@ -500,6 +504,13 @@ export default class RoomView extends React.Component<IProps, IState> {
         return hideWidgetDrawer === "false";
     }
 
+    public blobToFile(theBlob, fileName){
+        //A Blob() is almost a File() - it's just missing the two properties below which we will add
+        theBlob.lastModifiedDate = new Date();
+        theBlob.name = fileName;
+        return theBlob;
+    }
+
     componentDidMount() {
         const call = this.getCallForRoom();
         const callState = call ? call.state : null;
@@ -508,6 +519,15 @@ export default class RoomView extends React.Component<IProps, IState> {
         });
 
         window.addEventListener('beforeunload', this.onPageUnload);
+        window.addEventListener("message", (e) => {
+            let blob = e.data.blob;
+            if (!blob) {
+                return;
+            }
+            console.log('Get message from jitsi.html');
+            const upload = new Upload()
+            upload.sendContentListToRoom([this.blobToFile(blob, `Record from ${new Date().toString()}`)], this.state.roomId, MatrixClientPeg.get())
+        });
         if (this.props.resizeNotifier) {
             this.props.resizeNotifier.on("middlePanelResized", this.onResize);
         }

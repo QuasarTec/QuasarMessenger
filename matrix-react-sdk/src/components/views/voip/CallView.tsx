@@ -134,8 +134,8 @@ export default class CallView extends React.Component<IProps, IState> {
         this.startRecordingVideo      = this.startRecordingVideo.bind(this);
         this.pauseRecordingVideo      = this.pauseRecordingVideo.bind(this);
         this.addStreamsRecordingVideo = this.addStreamsRecordingVideo.bind(this);
-        this.getRemoteVideo = this.getRemoteVideo.bind(this);
-        this.getLocalVideo = this.getLocalVideo.bind(this);
+        this.getRemoteVideo           = this.getRemoteVideo.bind(this);
+        this.getLocalVideo            = this.getLocalVideo.bind(this);
 
         this.updateCallListeners(null, this.props.call);
     }
@@ -320,7 +320,14 @@ export default class CallView extends React.Component<IProps, IState> {
         var allStreams = [this.state.remoteStream, this.state.localStream]
         this.setState({
             recorder: new RecordRTC.MultiStreamRecorder(allStreams, {
-                mimeType: "video/webm"
+                mimeType: "video/webm",
+                video: {
+                    minWidth: 1280,
+                    minHeight: 720,
+
+                    maxWidth: 1920,
+                    maxHeight: 1080
+                }
             })
         }, () => {
             this.state.recorder.record();
