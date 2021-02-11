@@ -183,6 +183,16 @@ function createJWTToken() {
 }
 
 function joinConference() { // event handler bound in HTML
+    const localSettings = localStorage.getItem('mx_local_settings');
+    let language = 'ru';
+
+    try{
+        language = JSON.parse(localSettings).language;
+    }
+    catch(e){
+        console.log(e);
+    }
+
     let jwt;
     if (jitsiAuth === JITSI_OPENIDTOKEN_JWT_AUTH) {
         if (!openIdToken?.access_token) { // eslint-disable-line camelcase
@@ -212,7 +222,7 @@ function joinConference() { // event handler bound in HTML
         height: "100%",
         parentNode: document.querySelector("#jitsiContainer"),
         roomName: conferenceId,
-        configOverwrite: { defaultLanguage: 'ru' },
+        configOverwrite: { defaultLanguage: language },
         interfaceConfigOverwrite: {
             SHOW_JITSI_WATERMARK: false,
             SHOW_WATERMARK_FOR_GUESTS: false,
