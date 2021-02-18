@@ -39,10 +39,12 @@ import { OwnProfileStore } from "../../stores/OwnProfileStore";
 import { MatrixClientPeg } from "../../MatrixClientPeg";
 import RoomListNumResults from "../views/rooms/RoomListNumResults";
 import LeftPanelWidget from "./LeftPanelWidget";
+import SocialMediaChoice from './SocialMediaChoice';
 
 interface IProps {
     isMinimized: boolean;
     resizeNotifier: ResizeNotifier;
+    changeSocialMedia: any
 }
 
 interface IState {
@@ -446,6 +448,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
                     </div> }
                     { !this.props.isMinimized && <LeftPanelWidget onResize={this.onResize} /> }
                 </aside>
+                <SocialMediaChoice changeSocialMedia={ this.props.changeSocialMedia }/>
             </div>
         );
     }

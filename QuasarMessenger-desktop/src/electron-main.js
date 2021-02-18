@@ -70,6 +70,8 @@ let Seshat;
 let SeshatRecovery;
 let ReindexError;
 
+let authWindow;
+
 const seshatDefaultPassphrase = "DEFAULT_PASSPHRASE";
 
 try {
@@ -299,6 +301,25 @@ ipcMain.on('setBadgeCount', function(ev, count) {
     app.badgeCount = count;
     if (count === 0 && mainWindow) {
         mainWindow.flashFrame(false);
+    }
+});
+
+ipcMain.on('open_window', (_ev, link) => {
+    if(!authWindow){
+        authWindow = new BrowserWindow({
+            width: 1024,
+            height: 768,
+    
+        });
+
+        authWindow.setMenu(null);
+        authWindow.loadURL(link);
+        authWindow.webContents.openDevTools();
+
+        authWindow.on('close', () => {
+            mainWindow.webContents.send('window_close');
+            authWindow = null;
+        })
     }
 });
 
@@ -947,9 +968,9 @@ app.on('ready', async () => {
 
     let webUrl = 'vector://vector/webapp/';
 
-    //if(!app.isPackaged){
-    //    webUrl = 'http://127.0.0.1:8080/';
-    //}
+    if(!app.isPackaged){
+       webUrl = 'http://127.0.0.1:8080/';
+    }
 
     mainWindow.loadURL(webUrl);
     Menu.setApplicationMenu(vectorMenu);

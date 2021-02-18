@@ -54,6 +54,7 @@ import { ToggleRightPanelPayload } from "../../dispatcher/payloads/ToggleRightPa
 import { IThreepidInvite } from "../../stores/ThreepidInviteStore";
 import Modal from "../../Modal";
 import { ICollapseConfig } from "../../resizer/distributors/collapse";
+import SocialMedia from './SocialMedia';
 
 // We need to fetch each pinned message individually (if we don't already have it)
 // so each pinned message may trigger a request. Limit the number per room for sanity.
@@ -90,6 +91,8 @@ interface IProps {
     currentGroupId?: string;
     currentGroupIsNew?: boolean;
     justRegistered?: boolean;
+    changeSocialMedia: any;
+    socialMedia: object;
 }
 
 interface IUsageLimit {
@@ -108,6 +111,7 @@ interface IState {
     };
     usageLimitEventContent?: IUsageLimit;
     useCompactLayout: boolean;
+    shouldAuthOpen: boolean;
 }
 
 /**
@@ -150,6 +154,7 @@ class LoggedInView extends React.Component<IProps, IState> {
             syncErrorData: undefined,
             // use compact timeline view
             useCompactLayout: SettingsStore.getValue('useCompactLayout'),
+            shouldAuthOpen: true
         };
 
         // stash the MatrixClient in case we log out before we are unmounted
@@ -182,6 +187,12 @@ class LoggedInView extends React.Component<IProps, IState> {
             "useCompactLayout", null, this.onCompactLayoutChanged,
         );
 
+        window.ipcRenderer.on('window_close', () => {
+            this.setState({
+                shouldAuthOpen: false
+            });
+        });
+
         this.resizer = this._createResizer();
         this.resizer.attach();
         this._loadResizerPreferences();
@@ -194,6 +205,12 @@ class LoggedInView extends React.Component<IProps, IState> {
         this._matrixClient.removeListener("RoomState.events", this.onRoomStateEvents);
         SettingsStore.unwatchSetting(this.compactLayoutWatcherRef);
         this.resizer.detach();
+    }
+
+    UNSAFE_componentWillReceiveProps(_nextProps) {
+        this.setState({
+            shouldAuthOpen: true
+        });
     }
 
     // Child components assume that the client peg will not be null, so give them some
@@ -216,7 +233,7 @@ class LoggedInView extends React.Component<IProps, IState> {
     _createResizer() {
         let size;
         const collapseConfig: ICollapseConfig = {
-            toggleSize: 260 - 50,
+            toggleSize: 400,
             onCollapsed: (collapsed) => {
                 if (collapsed) {
                     dis.dispatch({action: "hide_left_panel"}, true);
@@ -605,6 +622,14 @@ class LoggedInView extends React.Component<IProps, IState> {
                     resizeNotifier={this.props.resizeNotifier}
                 />;
                 break;
+            case PageTypes.SocialMedia:
+                pageElement = (
+                    <SocialMedia name={ this.props.socialMedia.name }
+                                 shouldAuthOpen={ this.state.shouldAuthOpen }
+                                 changeState= { data => this.setState(data) }
+                    />
+                );
+                break;
         }
 
         let bodyClasses = 'mx_MatrixChat';
@@ -616,6 +641,7 @@ class LoggedInView extends React.Component<IProps, IState> {
             <LeftPanel
                 isMinimized={this.props.collapseLhs || false}
                 resizeNotifier={this.props.resizeNotifier}
+                changeSocialMedia={ this.props.changeSocialMedia }
             />
         );
 

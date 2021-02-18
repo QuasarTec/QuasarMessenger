@@ -115,6 +115,7 @@ export enum Views {
     // We are logged out (invalid token) but have our local state again. The user
     // should log back in to rehydrate the client.
     SOFT_LOGOUT,
+    SOCIAL_MEDIA
 }
 
 const AUTH_SCREENS = ["login", "forgot_password", "start_sso", "start_cas"];
@@ -203,6 +204,7 @@ interface IState {
     viaServers?: string[];
     pendingInitialSync?: boolean;
     justRegistered?: boolean;
+    socialMedia: object
 }
 
 export default class MatrixChat extends React.PureComponent<IProps, IState> {
@@ -244,6 +246,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             syncError: null, // If the current syncing status is ERROR, the error object, otherwise null.
             resizeNotifier: new ResizeNotifier(),
             ready: false,
+            socialMedia: ''
         };
 
         this.loggedInView = createRef();
@@ -364,6 +367,8 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             this.startPageChangeTimer();
         }
     }
+
+    // eslint-disable-next-line camelcase
 
     componentDidUpdate(prevProps, prevState) {
         if (this.shouldTrackPageChange(prevState, this.state)) {
@@ -1952,6 +1957,14 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                         onCloseAllSettings={this.onCloseAllSettings}
                         onRegistered={this.onRegistered}
                         currentRoomId={this.state.currentRoomId}
+                        shouldAuthOpen={ true }
+                        changeSocialMedia={ name => {
+                            this.setState({ 
+                                view: Views.SOCIAL_MEDIA,
+                                socialMedia: name,
+                                page_type: PageTypes.SocialMedia
+                            });
+                        } }
                     />
                 );
             } else {
@@ -2043,7 +2056,31 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                     fragmentAfterLogin={fragmentAfterLogin}
                 />
             );
-        } else {
+        } 
+        else if (this.state.view === Views.SOCIAL_MEDIA){
+            const { socialMedia } = this.state;
+            const LoggedInView = sdk.getComponent('structures.LoggedInView');
+
+            view = (
+                <LoggedInView
+                        {...this.props}
+                        {...this.state}
+                        ref={this.loggedInView}
+                        matrixClient={MatrixClientPeg.get()}
+                        onRoomCreated={this.onRoomCreated}
+                        onCloseAllSettings={this.onCloseAllSettings}
+                        onRegistered={this.onRegistered}
+                        currentRoomId={this.state.currentRoomId}
+                        changeSocialMedia={ name => {
+                            this.setState({ 
+                                view: Views.SOCIAL_MEDIA,
+                                socialMedia: name
+                            })
+                        } }
+                    />
+            )
+        }
+        else {
             console.error(`Unknown view ${this.state.view}`);
         }
 

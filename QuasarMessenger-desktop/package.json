@@ -3,7 +3,7 @@
   "productName": "Quasar",
   "main": "src/electron-main.js",
   "homepage": "http://messenger.easy-stars.ru/",
-  "version": "1.7.18",
+  "version": "1.7.19",
   "description": "A feature-rich client for Matrix.org",
   "author": "Quasar",
   "repository": {

@@ -302,6 +302,8 @@ import structures$UserView from './components/structures/UserView';
 structures$UserView && (components['structures.UserView'] = structures$UserView);
 import structures$ViewSource from './components/structures/ViewSource';
 structures$ViewSource && (components['structures.ViewSource'] = structures$ViewSource);
+import structures$VkLogin from './components/structures/VkLogin';
+structures$VkLogin && (components['structures.VkLogin'] = structures$VkLogin);
 import structures$auth$CompleteSecurity from './components/structures/auth/CompleteSecurity';
 structures$auth$CompleteSecurity && (components['structures.auth.CompleteSecurity'] = structures$auth$CompleteSecurity);
 import structures$auth$E2eSetup from './components/structures/auth/E2eSetup';
@@ -314,6 +316,8 @@ import structures$auth$SetupEncryptionBody from './components/structures/auth/Se
 structures$auth$SetupEncryptionBody && (components['structures.auth.SetupEncryptionBody'] = structures$auth$SetupEncryptionBody);
 import structures$auth$SoftLogout from './components/structures/auth/SoftLogout';
 structures$auth$SoftLogout && (components['structures.auth.SoftLogout'] = structures$auth$SoftLogout);
+import structures$auth$VkLinks from './components/structures/auth/VkLinks';
+structures$auth$VkLinks && (components['structures.auth.VkLinks'] = structures$auth$VkLinks);
 import views$auth$AuthBody from './components/views/auth/AuthBody';
 views$auth$AuthBody && (components['views.auth.AuthBody'] = views$auth$AuthBody);
 import views$auth$AuthFooter from './components/views/auth/AuthFooter';
