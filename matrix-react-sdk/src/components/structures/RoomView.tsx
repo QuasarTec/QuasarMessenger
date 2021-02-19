@@ -520,11 +520,20 @@ export default class RoomView extends React.Component<IProps, IState> {
 
         window.addEventListener('beforeunload', this.onPageUnload);
         window.addEventListener("message", (e) => {
+            if (e.data.checkIsAdmin && MatrixClientPeg.get().getUserId() === e.data.userId) {
+                const frames = document.getElementsByTagName("iframe")
+                for (let i = 0; i < frames.length; i++) {
+                    frames[i].contentWindow.postMessage({
+                        isAdminOfJitsiConference: true
+                    }, "*")
+                }
+            }
+        })
+        window.addEventListener("message", (e) => {
             let blob = e.data.blob;
             if (!blob) {
                 return;
             }
-            console.log('Get message from jitsi.html');
             const upload = new Upload()
             upload.sendContentListToRoom([this.blobToFile(blob, `Record from ${new Date().toString()}`)], this.state.roomId, MatrixClientPeg.get())
         });
