@@ -535,7 +535,7 @@ export default class RoomView extends React.Component<IProps, IState> {
                 return;
             }
             const upload = new Upload()
-            upload.sendContentListToRoom([this.blobToFile(blob, `Record from ${new Date().toString()}`)], this.state.roomId, MatrixClientPeg.get())
+            upload.sendContentListToRoom([this.blobToFile(blob, `Record from ${new Date().toString()}.webm`)], this.state.roomId, MatrixClientPeg.get())
         });
         if (this.props.resizeNotifier) {
             this.props.resizeNotifier.on("middlePanelResized", this.onResize);

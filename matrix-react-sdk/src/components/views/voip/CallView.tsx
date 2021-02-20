@@ -312,7 +312,7 @@ export default class CallView extends React.Component<IProps, IState> {
         this.setState({ recorder: null })
         this.state.recorder.stop((blob) => {
             const upload = new Upload()
-            upload.sendContentListToRoom([this.blobToFile(blob, `Record from ${new Date().toString()}`)], this.props.call.roomId, MatrixClientPeg.get())
+            upload.sendContentListToRoom([this.blobToFile(blob, `Record from ${new Date().toString()}.webm`)], this.props.call.roomId, MatrixClientPeg.get())
         });
     };
 
