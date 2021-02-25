@@ -1,14 +1,13 @@
 import React from 'react'
 
 export default function SocialMediaChoice(props){
-    const medias = ['Telegram', 'Instagram', 'VK'];
+    const medias = ['telegram', 'instagram', 'vk'];
     
     const handler = e => {
         const { id } = e.target;
-        const lowerCase = id.toLowerCase();
 
         props.changeSocialMedia({
-            name: lowerCase
+            name: id
         });
     }
 
@@ -17,8 +16,11 @@ export default function SocialMediaChoice(props){
             {
                 medias.map(media => {
                     return(
-                        <button id={ media } onClick={ handler } key={ media }>
-                            { media }
+                        <button className={ media } 
+                                id={ media } 
+                                onClick={ handler } 
+                                key={ media }>
+                            <img src={ require(`../../../res/img/social/${media}.png`) } />
                         </button>
                     )
                 })

@@ -1,0 +1,48 @@
+.mx_Chats{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    overflow-y: scroll;
+
+    .mx_Chat:last-child{
+        margin-bottom: 0;
+    }
+
+    .mx_Chat{
+        background-color:rgba(245, 245, 245, 0.90);
+        border-radius: 20px;
+        display: flex;
+        margin-bottom: 10px;
+        align-items: center;
+        padding: 7px;
+
+        img{
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            margin-right: 15px;
+            pointer-events: none;
+        }
+
+        .mx_ChatInfo{
+            pointer-events: none;
+            max-width: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+
+            p{
+                margin: 0;
+                overflow: hidden; 
+                white-space: nowrap;
+            }
+
+            .mx_Name{
+                font-weight: 600;
+                margin-bottom: 4px;
+                overflow: hidden; 
+                white-space: nowrap;
+            }
+        }
+    }
+}

@@ -439,8 +439,6 @@ export default class LeftPanel extends React.Component<IProps, IState> {
                             className={roomListClasses}
                             onScroll={this.onScroll}
                             ref={this.listContainerRef}
-                            // Firefox sometimes makes this element focusable due to
-                            // overflow:scroll;, so force it out of tab order.
                             tabIndex={-1}
                         >
                             {roomList}

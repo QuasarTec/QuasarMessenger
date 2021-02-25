@@ -1,16 +1,19 @@
 import React, { Component } from 'react'
-import { MatrixClientPeg } from "../../MatrixClientPeg";
+import Accounts from './Accounts';
+import Chats from './Chats';
 import SocialMediaChat from './SocialMediaChat'
-import LoginLinks from './auth/LoginLinks'
-import VkLogin from './VkLogin'
+import SocialMediaLogin from './SocialMediaLogin'
 
 export default class SocialMedia extends Component{
     constructor(props){
         super(props);
 
         this.state = {
-            data: null,
-            vk: null
+            chatId: undefined,
+            accountIndex: 0,
+            chatOffset: 0,
+            vk: [],
+            addNewAccount: false
         }
     }
 
@@ -19,52 +22,88 @@ export default class SocialMedia extends Component{
             vk: []
         }
 
-        this.setState({
-            data: res
-        });
+        this.setState(res);
     }
 
     setClient = client => {
-        this.setState(client);
+        const { name } = this.props;
+        const clone = { ...this.state };
+
+        clone[name].push(client);
+        clone.accountIndex = clone[name].length - 1;
+        clone.addNewAccount = false;
+
+        this.setState(clone);
     }
 
-    encodeParams = (initial, obj) => {
-        let edited = initial;
+    loadChats = (chat, offset) => {;
+        const clone = { ...this.state }
+        const { name } = this.props;
+        const { accountIndex } = clone;
+        const { msgs, members } = chat;
 
-        for (var key in obj) {
-            if (edited != "") {
-                edited += "&";
-            }
-            edited += key + "=" + encodeURIComponent(obj[key]);
+        const merged = { ...clone[name][accountIndex].mail };
+
+        merged.msgs = { ...merged.msgs, ...msgs };
+        merged.members = { ...merged.members, ...members }
+
+        clone.chatOffset = offset;
+        clone[name][accountIndex].mail = merged;
+        
+        this.setState(clone);
+    }
+
+    createClient = () => {
+        this.setState({
+            addNewAccount: true
+        });
+    }
+
+    changeProp = (e, propName) => {
+        const data = {};
+        const { index } = e.target.dataset;
+
+        try{
+            data[propName] = parseInt(index);
         }
-
-        return edited
+        catch{
+            data[propName] = 0;
+        }
+        
+        this.setState(data);
     }
 
     render(){
-        const { data } = this.state;
-        const { name, shouldAuthOpen } = this.props;
+        const { setClient, createClient, changeProp, loadChats, state, props } = this;
+        const { addNewAccount, accountIndex, chatId, chatOffset } = state;
+        const { name } = props;
 
-        const cli = MatrixClientPeg.get();
-
-        if(data && (!data[name] || data[name].length === 0) && shouldAuthOpen){
-            if(name === 'vk'){
-                const link = LoginLinks.vk;
-
-                const options = {
-                    client_id: '7765905',
-                    scope: 'messages',
-                    response_type: 'token'
-                }
-
-                const authLink = this.encodeParams(link, options);
-                window.ipcRenderer.send('open_window', authLink);
-            }
-        }
-        else if(data && data[name] && data[name].length !== 0){
-            return <SocialMediaChat />
+        if(state[name].length === 0 || addNewAccount){
+            return <SocialMediaLogin setClient={ setClient } />
         }
 
-        return <VkLogin setClient={ this.setClient }/>
+        else if(state[name].length !== 0){
+            return(
+                <div className="mx_SocialMedia">
+                    <Accounts accounts={ state[name] } 
+                              createClient={ createClient }
+                              changeIndex={ changeProp }
+                              currentIndex={ accountIndex }/>
+
+                    <Chats chats={ state[name][accountIndex].mail }
+                           name={ name }
+                           changeId={ changeProp }
+                           loadChats={ loadChats }
+                           chatOffset={ chatOffset }
+                           currentIndex={ accountIndex }/>
+
+                    { chatId && <SocialMediaChat name={ name } 
+                                                 data={ state[name][accountIndex] }
+                                                 chatId={ chatId } /> }
+                </div>
+            )
+        }
+
+        return <SocialMediaLogin />
     }
 }

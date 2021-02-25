@@ -204,7 +204,7 @@ interface IState {
     viaServers?: string[];
     pendingInitialSync?: boolean;
     justRegistered?: boolean;
-    socialMedia: object
+    socialMedia: any;
 }
 
 export default class MatrixChat extends React.PureComponent<IProps, IState> {
@@ -246,7 +246,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             syncError: null, // If the current syncing status is ERROR, the error object, otherwise null.
             resizeNotifier: new ResizeNotifier(),
             ready: false,
-            socialMedia: ''
+            socialMedia: {}
         };
 
         this.loggedInView = createRef();

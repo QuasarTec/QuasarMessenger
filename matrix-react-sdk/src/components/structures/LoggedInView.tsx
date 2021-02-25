@@ -92,7 +92,7 @@ interface IProps {
     currentGroupIsNew?: boolean;
     justRegistered?: boolean;
     changeSocialMedia: any;
-    socialMedia: object;
+    socialMedia: any;
 }
 
 interface IUsageLimit {
@@ -187,12 +187,6 @@ class LoggedInView extends React.Component<IProps, IState> {
             "useCompactLayout", null, this.onCompactLayoutChanged,
         );
 
-        window.ipcRenderer.on('window_close', () => {
-            this.setState({
-                shouldAuthOpen: false
-            });
-        });
-
         this.resizer = this._createResizer();
         this.resizer.attach();
         this._loadResizerPreferences();
@@ -233,7 +227,7 @@ class LoggedInView extends React.Component<IProps, IState> {
     _createResizer() {
         let size;
         const collapseConfig: ICollapseConfig = {
-            toggleSize: 400,
+            toggleSize: 320,
             onCollapsed: (collapsed) => {
                 if (collapsed) {
                     dis.dispatch({action: "hide_left_panel"}, true);
