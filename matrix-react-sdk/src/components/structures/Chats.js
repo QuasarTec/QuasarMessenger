@@ -56,18 +56,6 @@ export default function Chats(props){
     }
 
     if(name === 'vk'){
-        // const merged = {
-        //     msgs: {},
-        //     members: {}
-        // };
-
-        // for(const chat of chats.mail){
-        //     const { msgs, members } = chat;
-
-        //     merged.msgs = { ...merged.msgs, ...msgs };
-        //     merged.members = { ...merged.members, ...members }
-        // }
-
         const { msgs, members } = chats;
         const IDs = Object.keys(msgs).reverse();
 

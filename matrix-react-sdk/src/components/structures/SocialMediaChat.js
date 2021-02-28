@@ -14,16 +14,28 @@ export default class SocialMediaChat extends Component{
     }
 
     async componentDidMount(){
-        //this.chatRef.current.addEventListener('scroll', this.handleScroll, false);
-        await this.fetchDialog();
+        await this.initialMessageFetch();
     }
 
-    componentWillUnmount(){
-        //this.chatRef.current.removeEventListener('scroll', this.handleScroll, false);
+    async componentDidUpdate(prevProps){
+        if(prevProps.chatId !== this.props.chatId){
+            const { chatRef, initialMessageFetch } = this;
+            
+            chatRef.current.scrollTop = 0;
+            await initialMessageFetch();
+        }
+    }
+
+    initialMessageFetch = async() => {
+        const { data, chatId } = this.props;
+        const { id } = data.mail.msgs[chatId];
+
+        await this.fetchDialog(id, false);
     }
 
     handleScroll = e => {
-        const { isThrottling } = this.state;
+        const { isThrottling, chat } = this.state;
+        const clone = { ...e };
 
         if(!isThrottling){
             this.setState({
@@ -31,24 +43,13 @@ export default class SocialMediaChat extends Component{
             });
     
             setTimeout(async() => {
-                const { scrollHeight, scrollTop, clientHeight } = e.target;
-    
-                if(scrollHeight - scrollTop === clientHeight){
-                    console.log('bottom');
-                    // const updatedOffset = chatOffset + 20;
-    
-                    // const chatsRes = await fetch('http://localhost:3000/vk/mail', {
-                    //     method: 'POST',
-                    //     headers: {
-                    //         'Content-Type': 'application/json'
-                    //     },
-                    //     body: JSON.stringify({
-                    //         offset: updatedOffset
-                    //     })
-                    // });
-    
-                    // const chats = await chatsRes.json();
-                    // loadChats(chats[0], updatedOffset);
+                const { scrollHeight, scrollTop, clientHeight } = clone.target;
+
+                if(scrollHeight + scrollTop === clientHeight){
+                    const { msgs } = chat; 
+                    const firstMessage = Object.keys(msgs)[0];
+
+                    await this.fetchDialog(firstMessage, true);
                 }
     
                 this.setState({
@@ -62,25 +63,19 @@ export default class SocialMediaChat extends Component{
         const nextKeys = Object.keys(nextState.chat?.msgs || {});
         const currentKeys = Object.keys(this.state.chat?.msgs || {});
 
-        const areDifferent = objectDeepCompare.CompareArrays(nextKeys, currentKeys);
-        console.log(areDifferent);
+        const areSimilar = objectDeepCompare.CompareArrays(nextKeys, currentKeys);
 
-        if(nextProps.chatId !== this.props.chatId || !this.state.chat || areDifferent){
-            console.log(nextKeys, currentKeys);
+        if(nextProps.chatId !== this.props.chatId || !this.state.chat || !areSimilar){
             return true
         }            
 
         return false
     }
 
-    async componentDidUpdate(){
-        console.log('update');
-        await this.fetchDialog();
-    }
-
-    fetchDialog = async() => {
+    fetchDialog = async(id, shouldMerge) => {
+        const { chat: stateChat } = this.state;
         const { data, chatId } = this.props;
-        const { peerId, id } = data.mail.msgs[chatId];
+        const { peerId } = data.mail.msgs[chatId];
 
         const response = await fetch('http://localhost:3000/vk/mail/dialog', {
             method: 'POST',
@@ -94,32 +89,36 @@ export default class SocialMediaChat extends Component{
         });
 
         const chat = await response.json();
+        const merged = { ...chat[0] };
+
+        merged.msgs = shouldMerge ? { ...merged.msgs, ...stateChat?.msgs } : { ...merged.msgs }
 
         this.setState({
-            chat: chat[0],
+            chat: merged
         });
     }
 
     render(){
-        const clone = { ...this.state };
-        const { chat } = clone;
-
+        const { chatRef, handleScroll } = this;
+        const { chat } = this.state;
+ 
         if(chat){
-            const { msgs, members } = chat;
+            const { msgs: original, members } = chat;
 
             const { data, chatId } = this.props;
+            const msgs = { ...original };
             msgs[chatId] = data.mail.msgs[chatId];
 
-            const keys = Object.keys(msgs);
+            const keys = Object.keys(msgs).reverse();
 
-            return <div className='mx_SocialMediaChat' ref={ this.chatRef }>
+            return <div className='mx_SocialMediaChat' ref={ chatRef } onScroll={ handleScroll }>
                 {
                     keys.map(id => {
                         const { text, authorId } = msgs[id];
 
                         return(
                             <div className='mx_Message' key={ id }>
-                                <h2>{ members[authorId].firstName }</h2>
+                                <h2>{ members[authorId]?.firstName }</h2>
                                 <p>{ text }</p>
                             </div>
                         )

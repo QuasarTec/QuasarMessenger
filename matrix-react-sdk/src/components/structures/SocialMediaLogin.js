@@ -50,8 +50,6 @@ export default function VkLogin(props){
 					mail: chats[0]
 				}
 
-				console.log(chats[0]); //865
-
 				setFetching(false);
 				return setClient(response);
 			}
