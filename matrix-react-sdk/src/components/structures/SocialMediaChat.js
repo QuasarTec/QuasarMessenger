@@ -77,7 +77,7 @@ export default class SocialMediaChat extends Component{
         const { data, chatId } = this.props;
         const { peerId } = data.mail.msgs[chatId];
 
-        const response = await fetch('http://localhost:3000/vk/mail/dialog', {
+        const response = await fetch('http://localhost:8000/vk/mail/dialog', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -88,7 +88,7 @@ export default class SocialMediaChat extends Component{
             })
         });
 
-        const chat = await response.json();
+        const chat = await response;
         const merged = { ...chat[0] };
 
         merged.msgs = shouldMerge ? { ...merged.msgs, ...stateChat?.msgs } : { ...merged.msgs }
@@ -118,7 +118,7 @@ export default class SocialMediaChat extends Component{
 
                         return(
                             <div className='mx_Message' key={ id }>
-                                <h2>{ members[authorId]?.firstName }</h2>
+                                <h2>{ members?.[authorId]?.firstName }</h2>
                                 <p>{ text }</p>
                             </div>
                         )

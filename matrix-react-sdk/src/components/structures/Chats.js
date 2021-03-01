@@ -18,7 +18,7 @@ export default function Chats(props){
                     if(scrollHeight - scrollTop === clientHeight){
                         const updatedOffset = chatOffset + 20;
 
-                        const chatsRes = await fetch('http://localhost:3000/vk/mail', {
+                        const chatsRes = await fetch('http://localhost:8000/vk/mail', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json'
@@ -28,7 +28,7 @@ export default function Chats(props){
                             })
                         });
 
-				        const chats = await chatsRes.json();
+				        const chats = await chatsRes;
                         loadChats(chats[0], updatedOffset);
                     }
 

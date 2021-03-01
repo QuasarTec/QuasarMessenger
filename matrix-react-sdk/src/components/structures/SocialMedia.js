@@ -78,7 +78,7 @@ export default class SocialMedia extends Component{
         const { addNewAccount, accountIndex, chatId, chatOffset } = state;
         const { name } = props;
 
-        if(state[name].length === 0 || addNewAccount){
+        if((state[name] === undefined || state[name].length === 0) || addNewAccount){
             return <SocialMediaLogin setClient={ setClient } />
         }
 
