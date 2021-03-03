@@ -320,7 +320,7 @@ export default class CallView extends React.Component<IProps, IState> {
         var allStreams = [this.state.remoteStream, this.state.localStream]
         this.setState({
             recorder: new RecordRTC.MultiStreamRecorder(allStreams, {
-                mimeType: "video/webm",
+                mimeType: "video/webm;codecs=h264",
                 video: {
                     minWidth: 1280,
                     minHeight: 720,

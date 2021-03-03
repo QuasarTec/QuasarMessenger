@@ -505,10 +505,8 @@ export default class RoomView extends React.Component<IProps, IState> {
     }
 
     public blobToFile(theBlob, fileName){
-        //A Blob() is almost a File() - it's just missing the two properties below which we will add
-        theBlob.lastModifiedDate = new Date();
-        theBlob.name = fileName;
-        return theBlob;
+        let video = new File([theBlob], fileName, {type: 'video/mp4'})
+        return video;
     }
 
     componentDidMount() {
