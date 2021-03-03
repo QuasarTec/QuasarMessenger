@@ -15,14 +15,32 @@ export default class SocialMedia extends Component{
             vk: [],
             addNewAccount: false
         }
+
+        this.updateInterval = null;
     }
 
     componentDidMount(){
-        const res = {
-            vk: []
-        }
+        this.updateInterval = setInterval(async() => {
+            const { vk, accountIndex } = this.state;
+            const account = vk[accountIndex];
 
-        this.setState(res);
+            if(account?.activity){
+                const updates = await fetch('http://localhost:8000/vk/activity/check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(account.activity)
+                });
+
+                const json = await updates.json();
+                console.log(json);
+            }
+        }, 5000);
+    }
+
+    componentWillUnmount(){
+        clearInterval(this.updateInterval);
     }
 
     setClient = client => {
@@ -40,12 +58,13 @@ export default class SocialMedia extends Component{
         const clone = { ...this.state }
         const { name } = this.props;
         const { accountIndex } = clone;
-        const { msgs, members } = chat;
+        const { msgs, members, peers } = chat;
 
         const merged = { ...clone[name][accountIndex].mail };
 
         merged.msgs = { ...merged.msgs, ...msgs };
         merged.members = { ...merged.members, ...members }
+        merged.peers = { ...merged.peers, ...peers }
 
         clone.chatOffset = offset;
         clone[name][accountIndex].mail = merged;
@@ -83,6 +102,8 @@ export default class SocialMedia extends Component{
         }
 
         else if(state[name].length !== 0){
+            const { mail, activity } = state[name][accountIndex];
+
             return(
                 <div className="mx_SocialMedia">
                     <Accounts accounts={ state[name] } 
@@ -90,7 +111,8 @@ export default class SocialMedia extends Component{
                               changeIndex={ changeProp }
                               currentIndex={ accountIndex }/>
 
-                    <Chats chats={ state[name][accountIndex].mail }
+                    <Chats chats={ mail }
+                           activity={ activity }
                            name={ name }
                            changeId={ changeProp }
                            loadChats={ loadChats }
