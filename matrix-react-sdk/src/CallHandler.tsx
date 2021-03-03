@@ -695,7 +695,7 @@ export default class CallHandler {
             confId = base32.stringify(Buffer.from(roomId), { pad: false });
         } else {
             // Create a random human readable conference ID
-            confId = `JitsiConference${generateHumanReadableId()}`;
+            confId = `QuasarConference${generateHumanReadableId()}`;
         }
 
         let widgetUrl = WidgetUtils.getLocalJitsiWrapperUrl({auth: jitsiAuth});
