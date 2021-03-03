@@ -1,4 +1,5 @@
 import React, { Component, createRef } from 'react'
+import MessageComposer from './MessageComposer'
 import objectDeepCompare from 'object-deep-compare'
 
 export default class SocialMediaChat extends Component{
@@ -7,7 +8,8 @@ export default class SocialMediaChat extends Component{
 
         this.state = {
             chat: null,
-            isThrottling: false
+            isThrottling: false,
+            hash: ''
         }
 
         this.chatRef = createRef();
@@ -26,11 +28,45 @@ export default class SocialMediaChat extends Component{
         }
     }
 
+    shouldComponentUpdate(nextProps, nextState){
+        const nextKeys = Object.keys(nextState.chat?.msgs || {});
+        const currentKeys = Object.keys(this.state.chat?.msgs || {});
+
+        const areSimilar = objectDeepCompare.CompareArrays(nextKeys, currentKeys);
+
+        if(nextProps.chatId !== this.props.chatId 
+            || !this.state.chat 
+            || !areSimilar 
+            || this.state.hash !== nextState.hash)
+        {
+            return true
+        }            
+
+        return false
+    }
+
     initialMessageFetch = async() => {
         const { data, chatId } = this.props;
         const { id } = data.mail.msgs[chatId];
 
         await this.fetchDialog(id, false);
+    }
+
+    getSendHash = async(chat) => {
+        const { peerId } = chat.cur; 
+
+        const response = await fetch('http://localhost:8000/vk/mail/hash', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                peerId
+            })
+        });
+
+        const data = await response.json();
+        return data.hash
     }
 
     handleScroll = e => {
@@ -59,19 +95,6 @@ export default class SocialMediaChat extends Component{
         }
     }
 
-    shouldComponentUpdate(nextProps, nextState){
-        const nextKeys = Object.keys(nextState.chat?.msgs || {});
-        const currentKeys = Object.keys(this.state.chat?.msgs || {});
-
-        const areSimilar = objectDeepCompare.CompareArrays(nextKeys, currentKeys);
-
-        if(nextProps.chatId !== this.props.chatId || !this.state.chat || !areSimilar){
-            return true
-        }            
-
-        return false
-    }
-
     fetchDialog = async(id, shouldMerge) => {
         const { chat: stateChat } = this.state;
         const { data, chatId } = this.props;
@@ -88,20 +111,26 @@ export default class SocialMediaChat extends Component{
             })
         });
 
-        const chat = await response;
+        const chat = await response.json();
+        const hash = await this.getSendHash(chat[0]);
         const merged = { ...chat[0] };
 
-        merged.msgs = shouldMerge ? { ...merged.msgs, ...stateChat?.msgs } : { ...merged.msgs }
+        if(shouldMerge){
+            merged.msgs = { ...merged.msgs, ...stateChat?.msgs }
+            merged.members = { ...merged.members, ...stateChat?.members }
+            merged.forwards = { ...merged.forwards, ...stateChat?.forwards }
+        }
 
         this.setState({
-            chat: merged
+            chat: merged,
+            hash
         });
     }
 
     render(){
         const { chatRef, handleScroll } = this;
-        const { chat } = this.state;
- 
+        const { chat, hash } = this.state;
+
         if(chat){
             const { msgs: original, members } = chat;
 
@@ -110,22 +139,25 @@ export default class SocialMediaChat extends Component{
             msgs[chatId] = data.mail.msgs[chatId];
 
             const keys = Object.keys(msgs).reverse();
+            const imgRegex = /url\((.*)\)/;
 
             return <div className='mx_SocialMediaChat' ref={ chatRef } onScroll={ handleScroll }>
                 {
                     keys.map(id => {
-                        const { text, authorId } = msgs[id];
+                        const { text, authorId, attachesHTML } = msgs[id];
+                        const img = imgRegex.exec(attachesHTML)?.[1];
 
                         return(
                             <div className='mx_Message' key={ id }>
                                 <h2>{ members?.[authorId]?.firstName }</h2>
                                 <p>{ text }</p>
+                                { img && <img src={ img }/> }
                             </div>
                         )
                     })
                 }
-
-                <input className='mx_MessageComposer' type='text' name='message' placeholder='Сообщение' />
+                
+                <MessageComposer hash={ hash } cur={ chat.cur } />
             </div>
         }
         else{

@@ -1,0 +1,37 @@
+import React from 'react'
+
+export default function MessageComposer(props){
+    const handleSend = e => {
+        const { key, target } = e;
+        const { value } = target;
+
+        if(key === 'Enter' && value !== ''){
+            const { hash, cur } = props;
+            const { _af, peerId, groupId } = cur;
+
+            fetch('http://localhost:8000/vk/mail/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    _af,
+                    hash,
+                    to: peerId,
+                    from: groupId ? '' : 'dialog',
+                    message: value
+                })
+            });
+
+            target.value = '';
+        }
+    }
+
+    return(
+        <input className='mx_MessageComposer' 
+               type='text' 
+               onKeyDown={ handleSend }
+               name='message' 
+               placeholder='Сообщение' />
+    )
+}

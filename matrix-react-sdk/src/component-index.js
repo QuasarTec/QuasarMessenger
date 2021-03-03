@@ -276,6 +276,8 @@ import structures$InteractiveAuth from './components/structures/InteractiveAuth'
 structures$InteractiveAuth && (components['structures.InteractiveAuth'] = structures$InteractiveAuth);
 import structures$MainSplit from './components/structures/MainSplit';
 structures$MainSplit && (components['structures.MainSplit'] = structures$MainSplit);
+import structures$MessageComposer from './components/structures/MessageComposer';
+structures$MessageComposer && (components['structures.MessageComposer'] = structures$MessageComposer);
 import structures$MessagePanel from './components/structures/MessagePanel';
 structures$MessagePanel && (components['structures.MessagePanel'] = structures$MessagePanel);
 import structures$MyGroups from './components/structures/MyGroups';
