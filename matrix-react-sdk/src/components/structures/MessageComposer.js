@@ -1,4 +1,5 @@
 import React from 'react'
+import api_domain from '../../domains/api'
 
 export default function MessageComposer(props){
     const handleSend = e => {
@@ -6,10 +7,10 @@ export default function MessageComposer(props){
         const { value } = target;
 
         if(key === 'Enter' && value !== ''){
-            const { hash, cur } = props;
+            const { hash, cur, cookie } = props;
             const { _af, peerId, groupId } = cur;
 
-            fetch('http://localhost:8000/vk/mail/send', {
+            fetch(`${api_domain}/vk/mail/send`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -19,7 +20,8 @@ export default function MessageComposer(props){
                     hash,
                     to: peerId,
                     from: groupId ? '' : 'dialog',
-                    message: value
+                    message: value,
+                    cookie
                 })
             });
 

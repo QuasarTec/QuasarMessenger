@@ -31,12 +31,8 @@ import {UPDATE_EVENT} from "../../stores/AsyncStore";
 import {useEventEmitter} from "../../hooks/useEventEmitter";
 import MatrixClientContext from "../../contexts/MatrixClientContext";
 import MiniAvatarUploader, {AVATAR_SIZE} from "../views/elements/MiniAvatarUploader";
-import {SettingLevel} from "../../settings/SettingLevel";
-import SettingsStore from "../../settings/SettingsStore";
 import Analytics from "../../Analytics";
 import CountlyAnalytics from "../../CountlyAnalytics";
-import {UIFeature} from "../../settings/UIFeature";
-import {MatrixClientPeg} from "../../MatrixClientPeg";
 
 const onClickSendDm = () => {
     Analytics.trackEvent('home_page', 'button', 'dm');
@@ -95,61 +91,9 @@ const UserWelcomeTop = () => {
     </div>;
 };
 
-const enableIntegrationManager = (config: object) => {
-    const cfgName = 'enable_integration_manager';
-    const value = 'integrationProvisioning';
-
-    const configIntegrationManager = config?.[cfgName];
-    const settingsIntegrationManager = SettingsStore.getValue(value);
-
-    if(configIntegrationManager === undefined){
-        console.error(`The value of '${cfgName}' isn't found in config`);
-        return;
-    }
-    else if(configIntegrationManager !== settingsIntegrationManager){
-        if (!SettingsStore.getValue(UIFeature.Widgets)) return null;
-
-        SettingsStore.setValue(value, null, SettingLevel.ACCOUNT, configIntegrationManager).catch(err => {
-            console.error(`Error changing ${value}`);
-            console.error(err);
-        });
-    }
-}
-
-const allowFallbackICEServer = (config: object, matrix) => {
-    const cfgName = 'allow_iceserver_fallback';
-    const configFallbackAllow = config?.[cfgName];
-
-    if(configFallbackAllow === undefined){
-        console.error(`The value of '${cfgName}' isn't found in config`);
-        return;
-    }
-    else if(configFallbackAllow !== matrix['_fallbackICEServerAllowed']){
-        MatrixClientPeg.get().setFallbackICEServerAllowed(configFallbackAllow);
-    }
-}
-
 const HomePage: React.FC<IProps> = ({ justRegistered = false }) => {
     const config = SdkConfig.get();
     const pageUrl = getHomePageUrl(config);
-    const matrixClient = MatrixClientPeg.get();
-
-    const { rooms } = matrixClient.store;
-    const brandRoomId = config.brand_room_id;
-
-    enableIntegrationManager(config);
-    allowFallbackICEServer(config, matrixClient);
-    
-    if(!rooms?.[brandRoomId]){
-        matrixClient.joinRoom(config.brand_room_id);
-    }
-
-    SettingsStore.setValue(
-        'e2ee.manuallyVerifyAllSessions', 
-        brandRoomId,
-        SettingLevel.DEVICE,
-        config['manuallyVerifyAllSessions']
-    );
 
     if (pageUrl) {
         const EmbeddedPage = sdk.getComponent('structures.EmbeddedPage');

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
+import api_domain from '../../domains/api'
 
 export default function Chats(props){
     const [isFetching, setFetching] = useState(false);
@@ -8,7 +9,7 @@ export default function Chats(props){
 
     const trackScrollUpdate = e => {
         if(!isThrottling){
-            const { chatOffset, loadChats } = props;
+            const { chatOffset, loadChats, cookie } = props;
             isThrottling = true;
 
             setTimeout(async() => {
@@ -17,12 +18,13 @@ export default function Chats(props){
                 if(scrollHeight - scrollTop === clientHeight){
                     const updatedOffset = chatOffset + 20;
 
-                    const chatsRes = await fetch('http://localhost:8000/vk/mail', {
+                    const chatsRes = await fetch(`${api_domain}/vk/mail`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
+                            cookie,
                             offset: updatedOffset
                         })
                     });

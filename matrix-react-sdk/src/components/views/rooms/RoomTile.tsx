@@ -475,11 +475,12 @@ export default class RoomTile extends React.PureComponent<IProps, IState> {
                 </IconizedContextMenuOptionList>
                 <IconizedContextMenuOptionList red>
                     { brandRoomId !== roomId && 
-                    <IconizedContextMenuOption
-                        onClick={this.onLeaveRoomClick}
-                        label={_t("Leave Room")}
-                        iconClassName="mx_RoomTile_iconSignOut"
-                    />}
+                        <IconizedContextMenuOption
+                            onClick={this.onLeaveRoomClick}
+                            label={_t("Leave Room")}
+                            iconClassName="mx_RoomTile_iconSignOut"
+                        />
+                    }
                 </IconizedContextMenuOptionList>
             </IconizedContextMenu>;
         }

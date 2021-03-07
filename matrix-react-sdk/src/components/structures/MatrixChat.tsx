@@ -81,8 +81,6 @@ import ThreepidInviteStore, { IThreepidInvite, IThreepidInviteWireFormat } from 
 import {UIFeature} from "../../settings/UIFeature";
 import { CommunityPrototypeStore } from "../../stores/CommunityPrototypeStore";
 import DialPadModal from "../views/voip/DialPadModal";
-import EasyStars from '../../EasyStars'
-import crypto from 'crypto-js'
 
 /** constants for MatrixChat.state.view */
 export enum Views {
@@ -205,6 +203,7 @@ interface IState {
     pendingInitialSync?: boolean;
     justRegistered?: boolean;
     socialMedia: any;
+    sidePanelType: string;
 }
 
 export default class MatrixChat extends React.PureComponent<IProps, IState> {
@@ -246,7 +245,8 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             syncError: null, // If the current syncing status is ERROR, the error object, otherwise null.
             resizeNotifier: new ResizeNotifier(),
             ready: false,
-            socialMedia: {}
+            socialMedia: {},
+            sidePanelType: ''
         };
 
         this.loggedInView = createRef();
@@ -1965,6 +1965,11 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                                 page_type: PageTypes.SocialMedia
                             });
                         } }
+                        changeSidePanelType={ type => {
+                            this.setState({
+                                sidePanelType: type
+                            });
+                        } }
                     />
                 );
             } else {
@@ -2076,6 +2081,11 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                                 view: Views.SOCIAL_MEDIA,
                                 socialMedia: name
                             })
+                        } }
+                        changeSidePanelType={ type => {
+                            this.setState({
+                                sidePanelType: type
+                            });
                         } }
                     />
             )

@@ -157,8 +157,23 @@ class GroupFilterPanel extends React.Component {
                             >
                                 { this.renderGlobalIcon() }
                                 { tags }
-                                <div>
+                                <div className="mx_SidePanel">
                                     {createButton}
+
+                                    <button className="mx_SidePanelButton" 
+                                            onClick={ () => window.ipcRenderer.send('open_link', "https://easy-stars.ru/" ) }>
+                                        Сайт
+                                    </button>
+
+                                    <button className="mx_SidePanelButton" 
+                                            onClick={ () => this.props.changeSidePanelType('multidirect') }>
+                                        Мультидирект
+                                    </button>
+
+                                    <button className="mx_SidePanelButton" 
+                                            onClick={ () => this.props.changeSidePanelType('automatization') }>
+                                        Автоматизация
+                                    </button>
                                 </div>
                                 { provided.placeholder }
                             </div>

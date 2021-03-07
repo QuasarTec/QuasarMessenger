@@ -3,6 +3,8 @@ import Accounts from './Accounts';
 import Chats from './Chats';
 import SocialMediaChat from './SocialMediaChat'
 import SocialMediaLogin from './SocialMediaLogin'
+import api_domain from '../../domains/api'
+import objectDeepCompare from 'object-deep-compare'
 
 export default class SocialMedia extends Component{
     constructor(props){
@@ -13,42 +15,133 @@ export default class SocialMedia extends Component{
             accountIndex: 0,
             chatOffset: 0,
             vk: [],
-            addNewAccount: false
+            auth: [],
+            addNewAccount: false,
+            updates: {}
         }
 
         this.updateInterval = null;
     }
 
     componentDidMount(){
+        this.getCookieFromLocalStorage();
+
         this.updateInterval = setInterval(async() => {
-            const { vk, accountIndex } = this.state;
+            const { vk, accountIndex, updates, auth } = this.state;
             const account = vk[accountIndex];
 
             if(account?.activity){
-                const updates = await fetch('http://localhost:8000/vk/activity/check', {
+                const activity = await fetch(`${api_domain}/vk/activity/check`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(account.activity)
+                    body: JSON.stringify({ ...account.activity, cookie: auth[accountIndex] })
                 });
 
-                const json = await updates.json();
-                console.log(json);
+                const json = await activity.json();
+                const comparison = objectDeepCompare.CompareValuesWithConflicts(json, updates);
+                
+                if(json.updates.length !== 0 && comparison.length !== 0){
+                    await this.fetchOnUpdate();
+
+                    this.setState({
+                        updates: json
+                    });
+                }
+                return
             }
-        }, 5000);
+            return
+        }, 2000);
     }
 
     componentWillUnmount(){
         clearInterval(this.updateInterval);
     }
 
-    setClient = client => {
+    getInitialData = async(cookie) => {
+        const chatsRes = await fetch(`${api_domain}/vk/mail`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                cookie,
+                offset: 0
+            })
+        });
+        const chats = await chatsRes.json();
+
+        const accountDataRes = await fetch(`${api_domain}/vk/account_data`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cookie })
+        });
+        const accountData = await accountDataRes.json();
+
+        const activityRes = await fetch(`${api_domain}/vk/mail/activity`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cookie })
+        });
+        const activityData = await activityRes.json();
+
+        const response = {
+            profile: accountData,
+            activity: activityData,
+            mail: chats[0]
+        }
+
+        return this.setClient(response, cookie);
+    }
+
+    getCookieFromLocalStorage = async() => {
+        const { name } = this.props;
+        let count = 0;
+
+        while(true){
+            const cookie = localStorage.getItem(name + count);
+
+            if(cookie){
+                await this.getInitialData(cookie);
+            }
+            else{
+                return
+            }
+
+            count++;
+        }
+    }
+
+    async fetchOnUpdate(){
+        const { chatOffset, chatId, accountIndex, auth } = this.state;
+
+        const chatsRes = await fetch(`${api_domain}/vk/mail`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                cookie: auth[accountIndex],
+                offset: 0
+            })
+        });
+
+        const chats = await chatsRes.json();
+        console.log(chats);
+        this.loadChats(chats[0], chatId ? chatOffset : 0);
+    }
+
+    setClient = (client, cookie) => {
         const { name } = this.props;
         const clone = { ...this.state };
 
         clone[name].push(client);
-        clone.accountIndex = clone[name].length - 1;
+        clone.auth.push(cookie);
         clone.addNewAccount = false;
 
         this.setState(clone);
@@ -61,6 +154,20 @@ export default class SocialMedia extends Component{
         const { msgs, members, peers } = chat;
 
         const merged = { ...clone[name][accountIndex].mail };
+
+        for(const msg in msgs){
+            const { peerId } = msgs[msg];
+
+            for(const originalMsg in merged.msgs){
+                if(peerId === merged.msgs[originalMsg].peerId){
+                    if(originalMsg === clone.chatId.toString()){
+                        clone.chatId = msg;
+                    }
+
+                    delete merged.msgs[originalMsg];
+                }
+            }
+        }
 
         merged.msgs = { ...merged.msgs, ...msgs };
         merged.members = { ...merged.members, ...members }
@@ -88,19 +195,25 @@ export default class SocialMedia extends Component{
         catch{
             data[propName] = 0;
         }
+
+        if(propName === 'accountIndex') data.chatId = undefined
         
         this.setState(data);
     }
 
     render(){
-        const { setClient, createClient, changeProp, loadChats, state, props } = this;
-        const { addNewAccount, accountIndex, chatId, chatOffset } = state;
+        const { createClient, changeProp, loadChats, getInitialData, state, props } = this;
+        const { addNewAccount, accountIndex, chatId, chatOffset, auth } = state;
         const { name } = props;
 
-        if((state[name] === undefined || state[name].length === 0) || addNewAccount){
-            return <SocialMediaLogin setClient={ setClient } />
+        if(state[name].length === 0 && localStorage.getItem(name + accountIndex)){
+            return <div />
         }
-
+        if((state[name] === undefined || state[name].length === 0) || addNewAccount){
+            return <SocialMediaLogin getInitialData={ getInitialData }
+                                     accountIndex={ state[name].length }
+                                     name={ name } />
+        }
         else if(state[name].length !== 0){
             const { mail, activity } = state[name][accountIndex];
 
@@ -109,6 +222,7 @@ export default class SocialMedia extends Component{
                     <Accounts accounts={ state[name] } 
                               createClient={ createClient }
                               changeIndex={ changeProp }
+                              cookie={ auth[accountIndex] }
                               currentIndex={ accountIndex }/>
 
                     <Chats chats={ mail }
@@ -117,15 +231,17 @@ export default class SocialMedia extends Component{
                            changeId={ changeProp }
                            loadChats={ loadChats }
                            chatOffset={ chatOffset }
-                           currentIndex={ accountIndex }/>
+                           currentIndex={ accountIndex }
+                           cookie={ auth[accountIndex] }/>
 
                     { chatId && <SocialMediaChat name={ name } 
                                                  data={ state[name][accountIndex] }
+                                                 cookie={ auth[accountIndex] }
                                                  chatId={ chatId } /> }
                 </div>
             )
         }
 
-        return <SocialMediaLogin />
+        return <div />
     }
 }

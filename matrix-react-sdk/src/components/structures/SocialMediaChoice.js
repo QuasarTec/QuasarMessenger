@@ -1,7 +1,8 @@
 import React from 'react'
 
 export default function SocialMediaChoice(props){
-    const medias = ['telegram', 'instagram', 'vk'];
+    // const medias = ['telegram', 'instagram', 'vk'];
+    const medias = ['vk'];
     
     const handler = e => {
         const { id } = e.target;

@@ -1,60 +1,46 @@
 import React, { useState } from 'react';
 import { MatrixClientPeg } from "../../MatrixClientPeg";
+import api_domain from '../../domains/api'
 
 export default function VkLogin(props){
 	const [isFetching, setFetching] = useState(false);
 	const [error, setError] = useState('');
 
+	const getCookie = async(target) => {
+		const { userId } = MatrixClientPeg.get().credentials;
+		const { email, password } = target;
+
+		const login = await fetch(`${api_domain}/vk/login`, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({
+				email: email.value,
+				password: password.value,
+				userId
+			})
+		});
+
+		const data = await login.json();
+		const { cookie } = data;
+
+		return { cookie, status: login.status }
+	}
+
 	const tryToLogin = async(e) => {
+		const { name, accountIndex } = props;
+		const { target } = e;
+
 		e.preventDefault();
 
 		if(!isFetching){
+			const { cookie, status } = await getCookie(target);
 			setFetching(true);
 
-			const { userId } = MatrixClientPeg.get().credentials;
-
-			const { setClient } = props;
-			const { email, password } = e.target;
-
-			const login = await fetch('http://localhost:8000/vk/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					email: email.value,
-					password: password.value,
-					userId
-				})
-			});
-
-			if(login.status === 200){
-				const chatsRes = await fetch('http://localhost:8000/vk/mail', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					},
-					body: JSON.stringify({
-						offset: 0
-					})
-				});
-				
-				const chats = await chatsRes.json();
-
-				const accountDataRes = await fetch('http://localhost:8000/vk/account_data');
-				const accountData = await accountDataRes.json();
-
-				const activityRes = await fetch('http://localhost:8000/vk/mail/activity');
-				const activityData = await activityRes.json();
-
-				const response = {
-					profile: accountData,
-					activity: activityData,
-					mail: chats[0]
-				}
-
-				setFetching(false);
-				return setClient(response);
+			if(status === 200){
+				localStorage.setItem(name + accountIndex, cookie);
+				props.getInitialData(cookie);
 			}
 			else{
 				setError('Неправильный пароль или логин');

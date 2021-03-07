@@ -40,11 +40,14 @@ import { MatrixClientPeg } from "../../MatrixClientPeg";
 import RoomListNumResults from "../views/rooms/RoomListNumResults";
 import LeftPanelWidget from "./LeftPanelWidget";
 import SocialMediaChoice from './SocialMediaChoice';
+import AutomatizationLaunch from './AutomatizationLaunch'
 
 interface IProps {
     isMinimized: boolean;
     resizeNotifier: ResizeNotifier;
-    changeSocialMedia: any
+    changeSocialMedia: any;
+    sidePanelType: string;
+    changeSidePanelType: any;
 }
 
 interface IState {
@@ -399,9 +402,11 @@ export default class LeftPanel extends React.Component<IProps, IState> {
     }
 
     public render(): React.ReactNode {
+        let SidePanel = () => <div></div>;
+
         const groupFilterPanel = !this.state.showGroupFilterPanel ? null : (
             <div className="mx_LeftPanel_GroupFilterPanelContainer">
-                <GroupFilterPanel />
+                <GroupFilterPanel changeSidePanelType={ this.props.changeSidePanelType } />
                 {SettingsStore.getValue("feature_custom_tags") ? <CustomRoomTagPanel /> : null}
             </div>
         );
@@ -426,6 +431,13 @@ export default class LeftPanel extends React.Component<IProps, IState> {
             "mx_AutoHideScrollbar",
         );
 
+        if(this.props.sidePanelType === 'multidirect'){
+            SidePanel = () => <SocialMediaChoice changeSocialMedia={ this.props.changeSocialMedia }/>
+        }
+        else if(this.props.sidePanelType === 'automatization'){
+            SidePanel = () => <AutomatizationLaunch />
+        }
+
         return (
             <div className={containerClasses}>
                 {groupFilterPanel}
@@ -446,7 +458,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
                     </div> }
                     { !this.props.isMinimized && <LeftPanelWidget onResize={this.onResize} /> }
                 </aside>
-                <SocialMediaChoice changeSocialMedia={ this.props.changeSocialMedia }/>
+                <SidePanel />
             </div>
         );
     }

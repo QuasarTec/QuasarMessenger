@@ -1,0 +1,16 @@
+.mx_SidePanel{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+
+    .mx_SidePanelButton{
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        border: none;
+        margin: 0;
+        margin-bottom: 12px;
+        background-color: rgba(92, 100, 112, 0.2);
+    }
+}

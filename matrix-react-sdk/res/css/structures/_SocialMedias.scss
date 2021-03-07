@@ -17,14 +17,25 @@
         color: white;
         border: none;
         border-radius: 7px;
-        padding: 7px;
+        padding: 6px;
         margin-bottom: 10px;
+        color: black;
+
+        *{
+            pointer-events: none;
+        }
 
         img{
             width: 35px;
             height: 35px;
             pointer-events: none;
         }
+    }
+
+    .fixed{
+        width: 35px;
+        height: 35px;
+
     }
 }
 
@@ -130,6 +141,10 @@
             max-width: 40%;
             margin-bottom: 8px;
         }
+    }
+
+    .mx_Forward{
+        margin-left: 15px;
     }
 
     .mx_MessageComposer{

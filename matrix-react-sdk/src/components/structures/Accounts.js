@@ -2,6 +2,7 @@ import React from 'react'
 
 export default function Accounts(props){
     const { accounts, createClient, changeIndex, currentIndex } = props;
+    const httpRegex = /http/;
 
     return(
         <div className="mx_AccountsList">
@@ -14,7 +15,7 @@ export default function Accounts(props){
                              key={ name } 
                              data-index={ index }
                              onClick={ e => changeIndex(e, 'accountIndex') }>
-                            <img className='mx_Avatar' src={ pic }/>
+                            <img className='mx_Avatar' src={ httpRegex.test(pic) ? pic : 'https://m.vk.com/images/camera_100.png' }/>
                         </div>
                     )
                 })

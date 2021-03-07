@@ -28,7 +28,10 @@ import { fixupColorFonts } from '../../utils/FontManager';
 import * as sdk from '../../index';
 import dis from '../../dispatcher/dispatcher';
 import {MatrixClientPeg, IMatrixClientCreds} from '../../MatrixClientPeg';
+import SdkConfig from "../../SdkConfig";
 import SettingsStore from "../../settings/SettingsStore";
+import {SettingLevel} from "../../settings/SettingLevel";
+import {UIFeature} from "../../settings/UIFeature";
 
 import TagOrderActions from '../../actions/TagOrderActions';
 import RoomListActions from '../../actions/RoomListActions';
@@ -92,7 +95,9 @@ interface IProps {
     currentGroupIsNew?: boolean;
     justRegistered?: boolean;
     changeSocialMedia: any;
+    changeSidePanelType: any;
     socialMedia: any;
+    sidePanelType: string;
 }
 
 interface IUsageLimit {
@@ -227,7 +232,7 @@ class LoggedInView extends React.Component<IProps, IState> {
     _createResizer() {
         let size;
         const collapseConfig: ICollapseConfig = {
-            toggleSize: 320,
+            toggleSize: 350,
             onCollapsed: (collapsed) => {
                 if (collapsed) {
                     dis.dispatch({action: "hide_left_panel"}, true);
@@ -260,7 +265,7 @@ class LoggedInView extends React.Component<IProps, IState> {
     _loadResizerPreferences() {
         let lhsSize = parseInt(window.localStorage.getItem("mx_lhs_size"), 10);
         if (isNaN(lhsSize)) {
-            lhsSize = 350;
+            lhsSize = 450;
         }
         this.resizer.forHandleAt(0).resize(lhsSize);
     }
@@ -571,12 +576,66 @@ class LoggedInView extends React.Component<IProps, IState> {
         ), true);
     };
 
+    enableIntegrationManager = (config: object) => {
+        const cfgName = 'enable_integration_manager';
+        const value = 'integrationProvisioning';
+    
+        const configIntegrationManager = config?.[cfgName];
+        const settingsIntegrationManager = SettingsStore.getValue(value);
+    
+        if(configIntegrationManager === undefined){
+            console.error(`The value of '${cfgName}' isn't found in config`);
+            return;
+        }
+        else if(configIntegrationManager !== settingsIntegrationManager){
+            if (!SettingsStore.getValue(UIFeature.Widgets)) return null;
+    
+            SettingsStore.setValue(value, null, SettingLevel.ACCOUNT, configIntegrationManager).catch(err => {
+                console.error(`Error changing ${value}`);
+                console.error(err);
+            });
+        }
+    }
+    
+    allowFallbackICEServer = (config: object, matrix) => {
+        const cfgName = 'allow_iceserver_fallback';
+        const configFallbackAllow = config?.[cfgName];
+    
+        if(configFallbackAllow === undefined){
+            console.error(`The value of '${cfgName}' isn't found in config`);
+            return;
+        }
+        else if(configFallbackAllow !== matrix['_fallbackICEServerAllowed']){
+            MatrixClientPeg.get().setFallbackICEServerAllowed(configFallbackAllow);
+        }
+    }
+
     render() {
         const RoomView = sdk.getComponent('structures.RoomView');
         const UserView = sdk.getComponent('structures.UserView');
         const GroupView = sdk.getComponent('structures.GroupView');
         const MyGroups = sdk.getComponent('structures.MyGroups');
         const ToastContainer = sdk.getComponent('structures.ToastContainer');
+
+        const config = SdkConfig.get();
+        const matrixClient = MatrixClientPeg.get();
+
+        const { rooms } = matrixClient.store;
+        const brandRoomId = config.brand_room_id;
+
+        this.enableIntegrationManager(config);
+        this.allowFallbackICEServer(config, matrixClient);
+
+        SettingsStore.setValue(
+            'e2ee.manuallyVerifyAllSessions', 
+            brandRoomId,
+            SettingLevel.DEVICE,
+            config['manuallyVerifyAllSessions']
+        );
+        
+        if(!rooms?.[brandRoomId]){
+            matrixClient.joinRoom(config.brand_room_id);
+        }
 
         let pageElement;
 
@@ -636,6 +695,8 @@ class LoggedInView extends React.Component<IProps, IState> {
                 isMinimized={this.props.collapseLhs || false}
                 resizeNotifier={this.props.resizeNotifier}
                 changeSocialMedia={ this.props.changeSocialMedia }
+                changeSidePanelType={ this.props.changeSidePanelType }
+                sidePanelType={ this.props.sidePanelType }
             />
         );
 

@@ -254,6 +254,8 @@ import structures$Accounts from './components/structures/Accounts';
 structures$Accounts && (components['structures.Accounts'] = structures$Accounts);
 import structures$AutoHideScrollbar from './components/structures/AutoHideScrollbar';
 structures$AutoHideScrollbar && (components['structures.AutoHideScrollbar'] = structures$AutoHideScrollbar);
+import structures$AutomatizationLaunch from './components/structures/AutomatizationLaunch';
+structures$AutomatizationLaunch && (components['structures.AutomatizationLaunch'] = structures$AutomatizationLaunch);
 import structures$Chats from './components/structures/Chats';
 structures$Chats && (components['structures.Chats'] = structures$Chats);
 import structures$CustomRoomTagPanel from './components/structures/CustomRoomTagPanel';

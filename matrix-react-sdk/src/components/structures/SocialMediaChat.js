@@ -1,6 +1,7 @@
 import React, { Component, createRef } from 'react'
 import MessageComposer from './MessageComposer'
 import objectDeepCompare from 'object-deep-compare'
+import api_domain from '../../domains/api'
 
 export default class SocialMediaChat extends Component{
     constructor(props){
@@ -23,7 +24,7 @@ export default class SocialMediaChat extends Component{
         if(prevProps.chatId !== this.props.chatId){
             const { chatRef, initialMessageFetch } = this;
             
-            chatRef.current.scrollTop = 0;
+            if(chatRef.current) chatRef.current.scrollTop = 0;
             await initialMessageFetch();
         }
     }
@@ -53,14 +54,16 @@ export default class SocialMediaChat extends Component{
     }
 
     getSendHash = async(chat) => {
+        const { cookie } = this.props;
         const { peerId } = chat.cur; 
 
-        const response = await fetch('http://localhost:8000/vk/mail/hash', {
+        const response = await fetch(`${api_domain}/vk/mail/hash`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                cookie,
                 peerId
             })
         });
@@ -97,18 +100,25 @@ export default class SocialMediaChat extends Component{
 
     fetchDialog = async(id, shouldMerge) => {
         const { chat: stateChat } = this.state;
-        const { data, chatId } = this.props;
+        const { data, chatId, cookie } = this.props;
         const { peerId } = data.mail.msgs[chatId];
 
-        const response = await fetch('http://localhost:8000/vk/mail/dialog', {
+        const response = await fetch(`${api_domain}/vk/mail/dialog`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
+                cookie,
                 peerId,
                 msgId: id
             })
+        });
+
+        console.log({
+            cookie,
+            peerId,
+            msgId: id
         });
 
         const chat = await response.json();
@@ -121,6 +131,8 @@ export default class SocialMediaChat extends Component{
             merged.forwards = { ...merged.forwards, ...stateChat?.forwards }
         }
 
+        merged.msgs[chatId] = data.mail.msgs[chatId];
+
         this.setState({
             chat: merged,
             hash
@@ -132,11 +144,7 @@ export default class SocialMediaChat extends Component{
         const { chat, hash } = this.state;
 
         if(chat){
-            const { msgs: original, members } = chat;
-
-            const { data, chatId } = this.props;
-            const msgs = { ...original };
-            msgs[chatId] = data.mail.msgs[chatId];
+            const { msgs, members, forwards } = chat;
 
             const keys = Object.keys(msgs).reverse();
             const imgRegex = /url\((.*)\)/;
@@ -144,7 +152,7 @@ export default class SocialMediaChat extends Component{
             return <div className='mx_SocialMediaChat' ref={ chatRef } onScroll={ handleScroll }>
                 {
                     keys.map(id => {
-                        const { text, authorId, attachesHTML } = msgs[id];
+                        const { text, authorId, attachesHTML, forwards: forwardsMsgs } = msgs[id];
                         const img = imgRegex.exec(attachesHTML)?.[1];
 
                         return(
@@ -152,12 +160,31 @@ export default class SocialMediaChat extends Component{
                                 <h2>{ members?.[authorId]?.firstName }</h2>
                                 <p>{ text }</p>
                                 { img && <img src={ img }/> }
+
+                                { forwardsMsgs.length !== 0 && 
+                                    <div className="mx_Forward">
+                                        {
+                                            forwardsMsgs.map(forward => {
+                                                const { authorId: forwardId, text: nestedText, attachesHTML: nestedHtml } = forwards[forward];
+                                                const nestedImg = imgRegex.exec(nestedHtml)?.[1];
+
+                                                return(
+                                                    <div className="mx_ForwardedMessage" key={ forward }>
+                                                        <h2>{ members?.[forwardId]?.firstName }</h2>
+                                                        <p>{ nestedText }</p>
+                                                        { nestedImg && <img src={ nestedImg }/> }
+                                                    </div>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                }
                             </div>
                         )
                     })
                 }
                 
-                <MessageComposer hash={ hash } cur={ chat.cur } />
+                <MessageComposer hash={ hash } cur={ chat.cur } cookie={ this.props.cookie }/>
             </div>
         }
         else{
