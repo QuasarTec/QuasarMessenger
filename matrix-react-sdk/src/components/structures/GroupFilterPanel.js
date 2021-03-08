@@ -162,7 +162,7 @@ class GroupFilterPanel extends React.Component {
 
                                     <button className="mx_SidePanelButton" 
                                             onClick={ () => window.ipcRenderer.send('open_link', "https://easy-stars.ru/" ) }>
-                                        Сайт
+                                        <img src={ require('../../../res/img/side_panel/site.jpg') } />
                                     </button>
 
                                     <button className="mx_SidePanelButton" 

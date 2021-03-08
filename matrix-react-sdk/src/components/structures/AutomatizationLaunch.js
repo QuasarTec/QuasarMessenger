@@ -13,23 +13,11 @@ export default function AutomatizationLaunch(_props){
         <div className="mx_SocialMediaChoice">
             {
                 apps.map(app => {
-                    let Icon, img;
-
-                    try{
-                        img = require(`../../../res/img/automatization/${app}.png`);
-                        Icon = () => <img src={ img } />
-                    }
-                    catch{
-                        Icon = () => <p>{ app }</p>
-                    }
-
                     return(
                         <button id={ app }
-                                className={ img ? 'fixed' : '' }
-                                style={ img ? { padding: '0' } : {} }
                                 onClick={ handler } 
                                 key={ app }>
-                            <Icon />
+                            <img className="mx_AutoImg" src={ require(`../../../res/img/automatization/${app}.png`) } />
                         </button>
                     )
                 })

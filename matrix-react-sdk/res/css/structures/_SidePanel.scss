@@ -12,5 +12,14 @@
         margin: 0;
         margin-bottom: 12px;
         background-color: rgba(92, 100, 112, 0.2);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+
+        img{
+            height: 32px;
+        }
     }
 }
