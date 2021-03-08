@@ -115,12 +115,6 @@ export default class SocialMediaChat extends Component{
             })
         });
 
-        console.log({
-            cookie,
-            peerId,
-            msgId: id
-        });
-
         const chat = await response.json();
         const hash = await this.getSendHash(chat[0]);
         const merged = { ...chat[0] };

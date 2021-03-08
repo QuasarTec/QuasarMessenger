@@ -52,7 +52,7 @@ export default class SocialMedia extends Component{
                 return
             }
             return
-        }, 2000);
+        }, 3000);
     }
 
     componentWillUnmount(){
@@ -70,7 +70,14 @@ export default class SocialMedia extends Component{
                 offset: 0
             })
         });
-        const chats = await chatsRes.json();
+        let chats;
+
+        try{
+            chats = await chatsRes.json();
+        }
+        catch{
+            return { err: 'login' };
+        }
 
         const accountDataRes = await fetch(`${api_domain}/vk/account_data`, {
             method: 'POST',
@@ -107,7 +114,11 @@ export default class SocialMedia extends Component{
             const cookie = localStorage.getItem(name + count);
 
             if(cookie){
-                await this.getInitialData(cookie);
+                const res = await this.getInitialData(cookie);
+
+                if(res?.err === 'login'){
+                    localStorage.removeItem(name + count);
+                }
             }
             else{
                 return
@@ -132,7 +143,6 @@ export default class SocialMedia extends Component{
         });
 
         const chats = await chatsRes.json();
-        console.log(chats);
         this.loadChats(chats[0], chatId ? chatOffset : 0);
     }
 
