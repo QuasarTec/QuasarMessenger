@@ -167,12 +167,12 @@ class GroupFilterPanel extends React.Component {
 
                                     <button className="mx_SidePanelButton" 
                                             onClick={ () => this.props.changeSidePanelType('multidirect') }>
-                                        Мультидирект
+                                        <img src={ require('../../../res/img/side_panel/multidirect.jpg') } />
                                     </button>
 
                                     <button className="mx_SidePanelButton" 
                                             onClick={ () => this.props.changeSidePanelType('automatization') }>
-                                        Автоматизация
+                                        <img src={ require('../../../res/img/side_panel/robot.jpg') } />
                                     </button>
                                 </div>
                                 { provided.placeholder }
