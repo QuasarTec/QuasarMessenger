@@ -155,20 +155,25 @@ export default class SocialMediaChat extends Component{
                                 <p>{ text }</p>
                                 { img && <img src={ img }/> }
 
-                                { forwardsMsgs.length !== 0 && 
+                                { forwardsMsgs.length > 0 && 
                                     <div className="mx_Forward">
                                         {
                                             forwardsMsgs.map(forward => {
-                                                const { authorId: forwardId, text: nestedText, attachesHTML: nestedHtml } = forwards[forward];
-                                                const nestedImg = imgRegex.exec(nestedHtml)?.[1];
-
-                                                return(
-                                                    <div className="mx_ForwardedMessage" key={ forward }>
-                                                        <h2>{ members?.[forwardId]?.firstName }</h2>
-                                                        <p>{ nestedText }</p>
-                                                        { nestedImg && <img src={ nestedImg }/> }
-                                                    </div>
-                                                )
+                                                if(forwards[forward]){
+                                                    const { authorId: forwardId, text: nestedText, attachesHTML: nestedHtml } = forwards[forward];
+                                                    const nestedImg = imgRegex.exec(nestedHtml)?.[1];
+    
+                                                    return(
+                                                        <div className="mx_ForwardedMessage" key={ forward }>
+                                                            <h2>{ members?.[forwardId]?.firstName }</h2>
+                                                            <p>{ nestedText }</p>
+                                                            { nestedImg && <img src={ nestedImg }/> }
+                                                        </div>
+                                                    )
+                                                }
+                                                else{
+                                                    return;
+                                                }
                                             })
                                         }
                                     </div>

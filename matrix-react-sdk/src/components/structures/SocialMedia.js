@@ -5,6 +5,7 @@ import SocialMediaChat from './SocialMediaChat'
 import SocialMediaLogin from './SocialMediaLogin'
 import api_domain from '../../domains/api'
 import objectDeepCompare from 'object-deep-compare'
+import { MatrixClientPeg } from "../../MatrixClientPeg";
 
 export default class SocialMedia extends Component{
     constructor(props){
@@ -23,8 +24,8 @@ export default class SocialMedia extends Component{
         this.updateInterval = null;
     }
 
-    componentDidMount(){
-        this.getCookieFromLocalStorage();
+    async componentDidMount(){
+        await this.getCookieFromDB();
 
         this.updateInterval = setInterval(async() => {
             const { vk, accountIndex, updates, auth } = this.state;
@@ -106,25 +107,39 @@ export default class SocialMedia extends Component{
         return this.setClient(response, cookie);
     }
 
-    getCookieFromLocalStorage = async() => {
+    getCookieFromDB = async() => {
+        const { userId } = MatrixClientPeg.get().credentials;
         const { name } = this.props;
-        let count = 0;
 
-        while(true){
-            const cookie = localStorage.getItem(name + count);
+        const res = await fetch('https://matrix.easy-stars.ru/api/db/get', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: userId,
+                name
+            })
+        });
 
-            if(cookie){
-                const res = await this.getInitialData(cookie);
+        const cookies = await res.json();
 
-                if(res?.err === 'login'){
-                    localStorage.removeItem(name + count);
+        if(cookies.cookie){
+            for(const cookie of cookies.cookie){
+                const initial = await this.getInitialData(cookie);
+    
+                if(initial?.err === 'login'){
+                    await fetch('https://matrix.easy-stars.ru/api/db/remove', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            cookie
+                        })
+                    });
                 }
             }
-            else{
-                return
-            }
-
-            count++;
         }
     }
 
@@ -216,9 +231,6 @@ export default class SocialMedia extends Component{
         const { addNewAccount, accountIndex, chatId, chatOffset, auth } = state;
         const { name } = props;
 
-        if(state[name].length === 0 && localStorage.getItem(name + accountIndex)){
-            return <div />
-        }
         if((state[name] === undefined || state[name].length === 0) || addNewAccount){
             return <SocialMediaLogin getInitialData={ getInitialData }
                                      accountIndex={ state[name].length }
