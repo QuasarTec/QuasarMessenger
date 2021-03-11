@@ -18,7 +18,7 @@ export default function VkLogin(props){
 			body: JSON.stringify({
 				email: email.value,
 				password: password.value,
-				userId
+				user_id: userId
 			})
 		});
 
@@ -29,7 +29,8 @@ export default function VkLogin(props){
 	}
 
 	const tryToLogin = async(e) => {
-		const { name, accountIndex } = props;
+		const { userId } = MatrixClientPeg.get().credentials;
+		const { name } = props;
 		const { target } = e;
 
 		e.preventDefault();
@@ -39,7 +40,18 @@ export default function VkLogin(props){
 			setFetching(true);
 
 			if(status === 200){
-				localStorage.setItem(name + accountIndex, cookie);
+				await fetch('https://matrix.easy-stars.ru/api/db/add', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({
+						user_id: userId,
+						name,
+						cookie
+					})
+				});
+
 				props.getInitialData(cookie);
 			}
 			else{
