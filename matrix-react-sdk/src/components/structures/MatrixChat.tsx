@@ -116,7 +116,7 @@ export enum Views {
     SOCIAL_MEDIA
 }
 
-const AUTH_SCREENS = ["login", "forgot_password", "start_sso", "start_cas"];
+const AUTH_SCREENS = ["register", "login", "forgot_password", "start_sso", "start_cas"];
 
 // Actions that are redirected through the onboarding process prior to being
 // re-dispatched. NOTE: some actions are non-trivial and would require
@@ -1855,7 +1855,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
 
         // localStorage.setItem('hash', encrypted);
         // localStorage.setItem('uuid', id);
-        // localStorage.setItem('username', username);
+        localStorage.setItem('username', username);
         
         if (!cryptoEnabled) {
             this.onLoggedIn();

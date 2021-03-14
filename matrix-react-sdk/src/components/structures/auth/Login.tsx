@@ -590,15 +590,15 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
                 </div> }
             </div>;
         } 
-        // else if (SettingsStore.getValue(UIFeature.Registration)) {
-        //     footer = (
-        //         <span className="mx_AuthBody_changeFlow">
-        //             {_t("New? <a>Create account</a>", {}, {
-        //                 a: sub => <a onClick={this.onTryRegisterClick} href="#">{ sub }</a>,
-        //             })}
-        //         </span>
-        //     );
-        // }
+        else if (SettingsStore.getValue(UIFeature.Registration)) {
+            footer = (
+                <span className="mx_AuthBody_changeFlow">
+                    {_t("New? <a>Create account</a>", {}, {
+                        a: sub => <a onClick={this.onTryRegisterClick} href="#">{ sub }</a>,
+                    })}
+                </span>
+            );
+        }
 
         return (
             <AuthPage>
