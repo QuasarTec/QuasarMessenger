@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 
 export default function AutomatizationLaunch(_props){
-    const apps = ['VkLead', 'InstaLead', 'SkypeLead', 'TeleLead'];
+    const apps = ['VkLead', 'Vkreg', 'InstaLead', 'SkypeLead', 'SkypeReg', 'TeleLead'];
     const [error, setError] = useState('');
 
     const handler = async(e) => {
@@ -22,7 +22,8 @@ export default function AutomatizationLaunch(_props){
         const { result, status } = stars;
 
         if(status === 'successful'){
-            if(result.Stars[id] || result.Stars[`${id} Business`]){
+            let dev = true;
+            if(result.Stars[id] || result.Stars[`${id} Business`] || result.Stars[`${id}Soft`] || dev){
                 window.ipcRenderer.send('launch_app', id);
             }
             else{
