@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
+import axios from 'axios';
 
 export default function AutomatizationLaunch(_props){
-    const apps = ['VkLead', 'Vkreg', 'InstaLead', 'SkypeLead', 'SkypeReg', 'TeleLead'];
+    const apps = ['VkLead', 'Vkreg', 'InstaLead', 'SkypeLead', 'SkypeReg', 'TeleLead', 'VkConnect'];
     const [error, setError] = useState('');
 
     const handler = async(e) => {
@@ -22,12 +23,18 @@ export default function AutomatizationLaunch(_props){
         const { result, status } = stars;
 
         if(status === 'successful'){
-            let dev = true;
+            let dev = false;
             if(result.Stars[id] || result.Stars[`${id} Business`] || result.Stars[`${id}Soft`] || dev){
                 window.ipcRenderer.send('launch_app', id);
+                
             }
             else{
-                setError('У вас нет данного товара');
+                let connect_payed = await axios.get(`https://matrix.easy-stars.ru/bot/users.check-on-payed?${query.by_text}`)
+                if (connect_payed) {
+                    window.ipcRenderer.send('launch_app', id);
+                } else {
+                    setError('У вас нет данного товара');
+                }
             }
         }
         else{
