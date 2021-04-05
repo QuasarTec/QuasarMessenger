@@ -35,6 +35,41 @@
             border-radius: 8px;
         }
     }
+
+    .mx_StarError{
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: 100;
+
+        .mx_Error{
+            margin: 0 50px;
+            border-radius: 15px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color:rgba(253, 253, 253, 1);
+
+            p{
+                margin-bottom: 15px;
+            }
+
+            button{
+                margin: 0;
+                background: transparent;
+                color: #f54260;
+                padding: 0;
+            }
+        }
+    }
 }
 
 .mx_SocialMediaLogin{

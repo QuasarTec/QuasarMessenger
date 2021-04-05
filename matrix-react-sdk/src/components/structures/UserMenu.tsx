@@ -52,7 +52,6 @@ import ErrorDialog from "../views/dialogs/ErrorDialog";
 import EditCommunityPrototypeDialog from "../views/dialogs/EditCommunityPrototypeDialog";
 import {UIFeature} from "../../settings/UIFeature";
 import DonationMenu from './DonationMenu'
-import EasyStars from '../../EasyStars'
 
 interface IProps {
     isMinimized: boolean;
