@@ -23,5 +23,6 @@ export default {
     UserView: "user_view",
     GroupView: "group_view",
     MyGroups: "my_groups",
-    SocialMedia: "social_media"
+    SocialMedia: "social_media",
+    Browser: "browser",
 };

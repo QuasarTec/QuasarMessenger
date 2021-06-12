@@ -58,6 +58,8 @@ import { IThreepidInvite } from "../../stores/ThreepidInviteStore";
 import Modal from "../../Modal";
 import { ICollapseConfig } from "../../resizer/distributors/collapse";
 import SocialMedia from './SocialMedia';
+import SocialMediaName from '../../interfaces/SocialMedia';
+import Browser from './browser/Browser';
 
 // We need to fetch each pinned message individually (if we don't already have it)
 // so each pinned message may trigger a request. Limit the number per room for sanity.
@@ -95,8 +97,11 @@ interface IProps {
     currentGroupIsNew?: boolean;
     justRegistered?: boolean;
     changeSocialMedia: any;
+    showBrowser: () => void,
     changeSidePanelType: any;
-    socialMedia: any;
+    socialMedia: {
+        name: SocialMediaName
+    };
     sidePanelType: string;
 }
 
@@ -159,7 +164,7 @@ class LoggedInView extends React.Component<IProps, IState> {
             syncErrorData: undefined,
             // use compact timeline view
             useCompactLayout: SettingsStore.getValue('useCompactLayout'),
-            shouldAuthOpen: true
+            shouldAuthOpen: true,
         };
 
         // stash the MatrixClient in case we log out before we are unmounted
@@ -208,7 +213,7 @@ class LoggedInView extends React.Component<IProps, IState> {
 
     UNSAFE_componentWillReceiveProps(_nextProps) {
         this.setState({
-            shouldAuthOpen: true
+            shouldAuthOpen: true,
         });
     }
 
@@ -579,33 +584,31 @@ class LoggedInView extends React.Component<IProps, IState> {
     enableIntegrationManager = (config: object) => {
         const cfgName = 'enable_integration_manager';
         const value = 'integrationProvisioning';
-    
+
         const configIntegrationManager = config?.[cfgName];
         const settingsIntegrationManager = SettingsStore.getValue(value);
-    
-        if(configIntegrationManager === undefined){
+
+        if (configIntegrationManager === undefined) {
             console.error(`The value of '${cfgName}' isn't found in config`);
             return;
-        }
-        else if(configIntegrationManager !== settingsIntegrationManager){
+        } else if (configIntegrationManager !== settingsIntegrationManager) {
             if (!SettingsStore.getValue(UIFeature.Widgets)) return null;
-    
+
             SettingsStore.setValue(value, null, SettingLevel.ACCOUNT, configIntegrationManager).catch(err => {
                 console.error(`Error changing ${value}`);
                 console.error(err);
             });
         }
     }
-    
+
     allowFallbackICEServer = (config: object, matrix) => {
         const cfgName = 'allow_iceserver_fallback';
         const configFallbackAllow = config?.[cfgName];
-    
-        if(configFallbackAllow === undefined){
+
+        if (configFallbackAllow === undefined) {
             console.error(`The value of '${cfgName}' isn't found in config`);
             return;
-        }
-        else if(configFallbackAllow !== matrix['_fallbackICEServerAllowed']){
+        } else if (configFallbackAllow !== matrix['_fallbackICEServerAllowed']) {
             MatrixClientPeg.get().setFallbackICEServerAllowed(configFallbackAllow);
         }
     }
@@ -627,13 +630,13 @@ class LoggedInView extends React.Component<IProps, IState> {
         this.allowFallbackICEServer(config, matrixClient);
 
         SettingsStore.setValue(
-            'e2ee.manuallyVerifyAllSessions', 
+            'e2ee.manuallyVerifyAllSessions',
             brandRoomId,
             SettingLevel.DEVICE,
-            config['manuallyVerifyAllSessions']
+            config['manuallyVerifyAllSessions'],
         );
-        
-        if(!rooms?.[brandRoomId]){
+
+        if (!rooms?.[brandRoomId]) {
             matrixClient.joinRoom(config.brand_room_id);
         }
 
@@ -677,11 +680,11 @@ class LoggedInView extends React.Component<IProps, IState> {
                 break;
             case PageTypes.SocialMedia:
                 pageElement = (
-                    <SocialMedia name={ this.props.socialMedia.name }
-                                 shouldAuthOpen={ this.state.shouldAuthOpen }
-                                 changeState= { data => this.setState(data) }
-                    />
+                    <SocialMedia name={ this.props.socialMedia.name } />
                 );
+                break;
+            case PageTypes.Browser:
+                pageElement = <Browser />;
                 break;
         }
 
@@ -695,6 +698,7 @@ class LoggedInView extends React.Component<IProps, IState> {
                 isMinimized={this.props.collapseLhs || false}
                 resizeNotifier={this.props.resizeNotifier}
                 changeSocialMedia={ this.props.changeSocialMedia }
+                showBrowser={ this.props.showBrowser }
                 changeSidePanelType={ this.props.changeSidePanelType }
                 sidePanelType={ this.props.sidePanelType }
             />

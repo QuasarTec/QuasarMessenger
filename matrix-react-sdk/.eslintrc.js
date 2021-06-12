@@ -16,6 +16,7 @@ module.exports = {
         "no-async-promise-executor": "off",
         "quotes": "off",
         "indent": "off",
+        "linebreak-style": "off",
     },
 
     overrides: [{

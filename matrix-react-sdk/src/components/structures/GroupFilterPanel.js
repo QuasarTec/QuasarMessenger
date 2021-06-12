@@ -160,17 +160,17 @@ class GroupFilterPanel extends React.Component {
                                 <div className="mx_SidePanel">
                                     {createButton}
 
-                                    <button className="mx_SidePanelButton" 
-                                            onClick={ () => window.ipcRenderer.send('open_link', "https://easy-stars.ru/" ) }>
-                                        <img src={ require('../../../res/img/side_panel/site.jpg') } />
+                                    <button className="mx_SidePanelButton"
+                                            onClick={ this.props.showBrowser }>
+                                        <img src={ require('../../../res/img/side_panel/web.jpg') } />
                                     </button>
 
-                                    <button className="mx_SidePanelButton" 
+                                    <button className="mx_SidePanelButton"
                                             onClick={ () => this.props.changeSidePanelType('multidirect') }>
                                         <img src={ require('../../../res/img/side_panel/multidirect.jpg') } />
                                     </button>
 
-                                    <button className="mx_SidePanelButton" 
+                                    <button className="mx_SidePanelButton"
                                             onClick={ () => this.props.changeSidePanelType('automatization') }>
                                         <img src={ require('../../../res/img/side_panel/robot.jpg') } />
                                     </button>

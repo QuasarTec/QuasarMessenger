@@ -113,7 +113,7 @@ export enum Views {
     // We are logged out (invalid token) but have our local state again. The user
     // should log back in to rehydrate the client.
     SOFT_LOGOUT,
-    SOCIAL_MEDIA
+    SOCIAL_MEDIA,
 }
 
 const AUTH_SCREENS = ["register", "login", "forgot_password", "start_sso", "start_cas"];
@@ -246,7 +246,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             resizeNotifier: new ResizeNotifier(),
             ready: false,
             socialMedia: {},
-            sidePanelType: ''
+            sidePanelType: '',
         };
 
         this.loggedInView = createRef();
@@ -1856,7 +1856,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         // localStorage.setItem('hash', encrypted);
         // localStorage.setItem('uuid', id);
         localStorage.setItem('username', username);
-        
+
         if (!cryptoEnabled) {
             this.onLoggedIn();
         }
@@ -1959,15 +1959,21 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                         currentRoomId={this.state.currentRoomId}
                         shouldAuthOpen={ true }
                         changeSocialMedia={ name => {
-                            this.setState({ 
+                            this.setState({
                                 view: Views.SOCIAL_MEDIA,
                                 socialMedia: name,
-                                page_type: PageTypes.SocialMedia
+                                page_type: PageTypes.SocialMedia,
                             });
+                        } }
+                        showBrowser={ () => {
+                            console.log('showing browser');
+                            this.setState({
+                                page_type: PageTypes.Browser,
+                            })
                         } }
                         changeSidePanelType={ type => {
                             this.setState({
-                                sidePanelType: type
+                                sidePanelType: type,
                             });
                         } }
                     />
@@ -1994,7 +2000,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         } else if (this.state.view === Views.WELCOME) {
             const Welcome = sdk.getComponent('auth.Welcome');
             view = <Welcome />;
-        } 
+        }
         // else if (this.state.view === Views.REGISTER && SettingsStore.getValue(UIFeature.Registration) && this.state.isSyncWindowVisible) {
         //     const EasyStarsSync = sdk.getComponent('auth.EasyStarsSync');
 
@@ -2005,7 +2011,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         //     }
 
         //     view = <EasyStarsSync removeSyncWindow={ removeSyncWindow }/>;
-        // } 
+        // }
         else if (this.state.view === Views.REGISTER && SettingsStore.getValue(UIFeature.Registration)) {
             const Registration = sdk.getComponent('structures.auth.Registration');
             const email = ThreepidInviteStore.instance.pickBestInvite()?.toEmail;
@@ -2025,8 +2031,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                     {...this.getServerProperties()}
                 />
             );
-        } 
-        else if (this.state.view === Views.FORGOT_PASSWORD && SettingsStore.getValue(UIFeature.PasswordReset)) {
+        } else if (this.state.view === Views.FORGOT_PASSWORD && SettingsStore.getValue(UIFeature.PasswordReset)) {
             const ForgotPassword = sdk.getComponent('structures.auth.ForgotPassword');
             view = (
                 <ForgotPassword
@@ -2061,36 +2066,39 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                     fragmentAfterLogin={fragmentAfterLogin}
                 />
             );
-        } 
-        else if (this.state.view === Views.SOCIAL_MEDIA){
-            const { socialMedia } = this.state;
+        } else if (this.state.view === Views.SOCIAL_MEDIA) {
             const LoggedInView = sdk.getComponent('structures.LoggedInView');
 
             view = (
                 <LoggedInView
-                        {...this.props}
-                        {...this.state}
-                        ref={this.loggedInView}
-                        matrixClient={MatrixClientPeg.get()}
-                        onRoomCreated={this.onRoomCreated}
-                        onCloseAllSettings={this.onCloseAllSettings}
-                        onRegistered={this.onRegistered}
-                        currentRoomId={this.state.currentRoomId}
-                        changeSocialMedia={ name => {
-                            this.setState({ 
-                                view: Views.SOCIAL_MEDIA,
-                                socialMedia: name
-                            })
-                        } }
-                        changeSidePanelType={ type => {
-                            this.setState({
-                                sidePanelType: type
-                            });
-                        } }
-                    />
+                    {...this.props}
+                    {...this.state}
+                    ref={this.loggedInView}
+                    matrixClient={MatrixClientPeg.get()}
+                    onRoomCreated={this.onRoomCreated}
+                    onCloseAllSettings={this.onCloseAllSettings}
+                    onRegistered={this.onRegistered}
+                    currentRoomId={this.state.currentRoomId}
+                    changeSocialMedia={ name => {
+                        this.setState({
+                            view: Views.SOCIAL_MEDIA,
+                            socialMedia: name,
+                        })
+                    } }
+                    showBrowser={ () => {
+                        console.log('showing browser');
+                        this.setState({
+                            page_type: PageTypes.Browser,
+                        })
+                    } }
+                    changeSidePanelType={ type => {
+                        this.setState({
+                                sidePanelType: type,
+                        });
+                    } }
+                />
             )
-        }
-        else {
+        } else {
             console.error(`Unknown view ${this.state.view}`);
         }
 

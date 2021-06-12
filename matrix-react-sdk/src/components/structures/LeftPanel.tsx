@@ -48,6 +48,7 @@ interface IProps {
     changeSocialMedia: any;
     sidePanelType: string;
     changeSidePanelType: any;
+    showBrowser: () => void
 }
 
 interface IState {
@@ -78,7 +79,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
         this.state = {
             showBreadcrumbs: BreadcrumbsStore.instance.visible,
             showGroupFilterPanel: SettingsStore.getValue('TagPanel.enableTagPanel'),
-            showRoomList: true
+            showRoomList: true,
         };
 
         BreadcrumbsStore.instance.on(UPDATE_EVENT, this.onBreadcrumbsUpdate);
@@ -352,7 +353,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
         return (
             <div className="mx_LeftPanel_userHeader">
                 <UserMenu isMinimized={this.props.isMinimized}
-                          showRoomList={ this.showRoomList } />
+                    showRoomList={ this.showRoomList } />
             </div>
         );
     }
@@ -375,7 +376,7 @@ export default class LeftPanel extends React.Component<IProps, IState> {
 
     private showRoomList = () =>{
         this.setState({
-            showRoomList: true
+            showRoomList: true,
         });
     }
 
@@ -406,7 +407,9 @@ export default class LeftPanel extends React.Component<IProps, IState> {
 
         const groupFilterPanel = !this.state.showGroupFilterPanel ? null : (
             <div className="mx_LeftPanel_GroupFilterPanelContainer">
-                <GroupFilterPanel changeSidePanelType={ this.props.changeSidePanelType } />
+                <GroupFilterPanel
+                    changeSidePanelType={ this.props.changeSidePanelType }
+                    showBrowser={ this.props.showBrowser } />
                 {SettingsStore.getValue("feature_custom_tags") ? <CustomRoomTagPanel /> : null}
             </div>
         );
@@ -431,10 +434,9 @@ export default class LeftPanel extends React.Component<IProps, IState> {
             "mx_AutoHideScrollbar",
         );
 
-        if(this.props.sidePanelType === 'multidirect'){
-            SidePanel = () => <SocialMediaChoice changeSocialMedia={ this.props.changeSocialMedia }/>
-        }
-        else if(this.props.sidePanelType === 'automatization'){
+        if (this.props.sidePanelType === 'multidirect') {
+            SidePanel = () => <SocialMediaChoice changeSocialMedia={ this.props.changeSocialMedia } />
+        } else if (this.props.sidePanelType === 'automatization') {
             SidePanel = () => <AutomatizationLaunch />
         }
 
