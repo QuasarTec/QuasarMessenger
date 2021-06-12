@@ -1,6 +1,6 @@
 enum SocialMediaName {
     VK = 'vk',
-    Telegram = 'telegram'
+    // Telegram = 'telegram'
 }
 
 export default SocialMediaName;
