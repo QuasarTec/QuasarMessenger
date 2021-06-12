@@ -37,6 +37,12 @@ import CountlyAnalytics from "../CountlyAnalytics";
 import UserActivity from "../UserActivity";
 import {ModalWidgetStore} from "../stores/ModalWidgetStore";
 
+declare namespace NodeJS {
+    interface Process {
+        resourcesPath: string;
+    }
+}
+
 declare global {
     interface Window {
         Modernizr: ModernizrStatic;
@@ -64,6 +70,7 @@ declare global {
         mxCountlyAnalytics: typeof CountlyAnalytics;
         mxUserActivity: UserActivity;
         mxModalWidgetStore: ModalWidgetStore;
+        telegramPort: number | string;
     }
 
     interface Document {
