@@ -11,9 +11,10 @@ interface Props {
 const SocialMedia: FC<Props> = ({ name }: Props) => {
     if (name === SocialMediaName.VK) {
         return <VK name={name} />
-    } else if (name === SocialMediaName.Telegram) {
-        return <Telegram />
     }
+    // } else if (name === SocialMediaName.Telegram) {
+    //     return <Telegram />
+    // }
 }
 
 export default SocialMedia;
