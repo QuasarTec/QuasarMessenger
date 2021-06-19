@@ -58,10 +58,10 @@ import structures$auth$Registration from './components/structures/auth/Registrat
 structures$auth$Registration && (components['structures.auth.Registration'] = structures$auth$Registration);
 import structures$browser$Browser from './components/structures/browser/Browser';
 structures$browser$Browser && (components['structures.browser.Browser'] = structures$browser$Browser);
+import structures$browser$DefaultLinks from './components/structures/browser/DefaultLinks';
+structures$browser$DefaultLinks && (components['structures.browser.DefaultLinks'] = structures$browser$DefaultLinks);
 import structures$browser$Frame from './components/structures/browser/Frame';
 structures$browser$Frame && (components['structures.browser.Frame'] = structures$browser$Frame);
-import structures$browser$Highlited from './components/structures/browser/Highlited';
-structures$browser$Highlited && (components['structures.browser.Highlited'] = structures$browser$Highlited);
 import structures$browser$SearchBar from './components/structures/browser/SearchBar';
 structures$browser$SearchBar && (components['structures.browser.SearchBar'] = structures$browser$SearchBar);
 import structures$socialMedia$Telegram from './components/structures/socialMedia/Telegram';

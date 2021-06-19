@@ -41,6 +41,7 @@ import RoomListNumResults from "../views/rooms/RoomListNumResults";
 import LeftPanelWidget from "./LeftPanelWidget";
 import SocialMediaChoice from './SocialMediaChoice';
 import AutomatizationLaunch from './AutomatizationLaunch'
+import DefaultLinks from "./browser/DefaultLinks";
 
 interface IProps {
     isMinimized: boolean;
@@ -48,7 +49,8 @@ interface IProps {
     changeSocialMedia: any;
     sidePanelType: string;
     changeSidePanelType: any;
-    showBrowser: () => void
+    showBrowser: () => void,
+    setDefaultBrowserLink: (link: string) => void
 }
 
 interface IState {
@@ -438,6 +440,8 @@ export default class LeftPanel extends React.Component<IProps, IState> {
             SidePanel = () => <SocialMediaChoice changeSocialMedia={ this.props.changeSocialMedia } />
         } else if (this.props.sidePanelType === 'automatization') {
             SidePanel = () => <AutomatizationLaunch />
+        } else if (this.props.sidePanelType === 'browser') {
+            SidePanel = () => <DefaultLinks setWebsiteLink={this.props.setDefaultBrowserLink} />
         }
 
         return (

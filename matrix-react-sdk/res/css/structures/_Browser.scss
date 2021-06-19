@@ -33,36 +33,4 @@
         height: 93%;
         border: none;
     }
-
-    .highlited {
-        height: 93%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        button {
-            font-family: Inter, Twemoji, 'Apple Color Emoji', 'Segoe UI Emoji', Arial, Helvetica, Sans-Serif, 'Noto Color Emoji';
-            background: transparent;
-            border: none;
-            padding: 0.8vw;
-            border-radius: 20px;
-            transition: 300ms;
-
-            img {
-                height: 5vw;
-                width: 5vw;
-                border-radius: 20%;
-            }
-
-            p {
-                font-weight: 600;
-                font-size: 0.8vw;
-            }
-
-            &:hover {
-                background-color: rgba(232, 232, 232, 0.77);
-                cursor: pointer;
-            }
-        }
-    }
 }

@@ -122,6 +122,7 @@ interface IState {
     usageLimitEventContent?: IUsageLimit;
     useCompactLayout: boolean;
     shouldAuthOpen: boolean;
+    defaultBrowserLink: string
 }
 
 /**
@@ -165,6 +166,7 @@ class LoggedInView extends React.Component<IProps, IState> {
             // use compact timeline view
             useCompactLayout: SettingsStore.getValue('useCompactLayout'),
             shouldAuthOpen: true,
+            defaultBrowserLink: 'https://www.google.com/',
         };
 
         // stash the MatrixClient in case we log out before we are unmounted
@@ -613,6 +615,12 @@ class LoggedInView extends React.Component<IProps, IState> {
         }
     }
 
+    setDefaultBrowserLink = (link: string) => {
+        this.setState({
+            defaultBrowserLink: link,
+        });
+    }
+
     render() {
         const RoomView = sdk.getComponent('structures.RoomView');
         const UserView = sdk.getComponent('structures.UserView');
@@ -684,7 +692,12 @@ class LoggedInView extends React.Component<IProps, IState> {
                 );
                 break;
             case PageTypes.Browser:
-                pageElement = <Browser />;
+                pageElement = (
+                    <Browser
+                        browserLink={this.state.defaultBrowserLink}
+                        setBrowserLink={this.setDefaultBrowserLink}
+                    />
+                );
                 break;
         }
 
@@ -701,6 +714,7 @@ class LoggedInView extends React.Component<IProps, IState> {
                 showBrowser={ this.props.showBrowser }
                 changeSidePanelType={ this.props.changeSidePanelType }
                 sidePanelType={ this.props.sidePanelType }
+                setDefaultBrowserLink={ this.setDefaultBrowserLink }
             />
         );
 

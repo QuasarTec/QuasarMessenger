@@ -161,7 +161,12 @@ class GroupFilterPanel extends React.Component {
                                     {createButton}
 
                                     <button className="mx_SidePanelButton"
-                                            onClick={ this.props.showBrowser }>
+                                            onClick={ () => {
+                                                const { showBrowser, changeSidePanelType } = this.props;
+
+                                                showBrowser();
+                                                changeSidePanelType('browser');
+                                             } }>
                                         <img src={ require('../../../res/img/side_panel/web.jpg') } />
                                     </button>
 

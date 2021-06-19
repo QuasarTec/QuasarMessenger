@@ -1,23 +1,25 @@
 import React, { FC, useState } from 'react';
 import SearchBar from './SearchBar';
 import Frame from './Frame';
-import Highlighted from './Highlited';
 
-const Browser: FC = () => {
-    const [websiteLink, setWebsiteLink] = useState('');
+interface Props {
+    browserLink: string,
+    setBrowserLink: (link: string) => void
+}
+
+const Browser: FC<Props> = ({ browserLink, setBrowserLink }: Props) => {
     const [error, setError] = useState('');
+
     return (
         <div className="browser">
             <SearchBar
-                setWebsiteLink={setWebsiteLink}
-                defaultLink={websiteLink}
+                setWebsiteLink={setBrowserLink}
+                defaultLink={browserLink}
                 setError={setError}
             />
+
             { error && <p className="danger">{error}</p> }
-            { websiteLink ?
-                (!error && <Frame link={websiteLink} />) :
-                <Highlighted setWebsiteLink={setWebsiteLink} />
-            }
+            { !error && <Frame link={browserLink} /> }
         </div>
     );
 };

@@ -3,7 +3,7 @@ import React, { useState, FC } from 'react';
 interface Props {
     setWebsiteLink: (link: string) => void,
     setError: (error: string) => void,
-    defaultLink?: string
+    defaultLink: string
 }
 
 const isURLValid = (str) => {
@@ -25,7 +25,6 @@ const SearchBar: FC<Props> = ({ setWebsiteLink, defaultLink, setError }: Props) 
     };
 
     const onSubmit = () => {
-        console.log(searchLink);
         if (isURLValid(searchLink)) {
             setError('');
             setWebsiteLink(searchLink);
@@ -36,7 +35,7 @@ const SearchBar: FC<Props> = ({ setWebsiteLink, defaultLink, setError }: Props) 
 
     return (
         <div className="search-bar">
-            <input type='text' onChange={onChange} defaultValue={defaultLink} />
+            <input type='text' onChange={onChange} defaultValue={defaultLink} key={defaultLink} />
             <button className="search" onClick={onSubmit}>Перейти</button>
         </div>
     );
