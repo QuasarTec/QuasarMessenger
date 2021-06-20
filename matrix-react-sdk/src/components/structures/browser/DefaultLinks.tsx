@@ -12,9 +12,29 @@ interface Button {
 
 const buttons: Button[] = [
     {
+        url: 'https://www.google.com/',
+        iconPath: require('../../../../res/img/links/google.jpg'),
+        name: 'google',
+    },
+    {
+        url: 'https://easy-stars.ru/',
+        iconPath: require('../../../../res/img/links/site.jpg'),
+        name: 'EasyStars',
+    },
+    {
+        url: 'https://qtconnect.ru/',
+        iconPath: require('../../../../res/img/links/connect.png'),
+        name: 'Connect',
+    },
+    {
         url: 'https://rucaptcha.com/',
         iconPath: require('../../../../res/img/links/rucaptcha.png'),
         name: 'ruCaptcha',
+    },
+    {
+        url: 'https://vk.com/',
+        iconPath: require('../../../../res/img/social/vk.png'),
+        name: 'vk',
     },
     {
         url: 'https://web-telegram.ru',
@@ -45,21 +65,6 @@ const buttons: Button[] = [
         url: 'https://yoomoney.ru',
         iconPath: require('../../../../res/img/links/yoomoney.png'),
         name: 'yoomoney',
-    },
-    {
-        url: 'https://mail.google.com/',
-        iconPath: require('../../../../res/img/links/gmail.png'),
-        name: 'gmail',
-    },
-    {
-        url: 'https://easy-stars.ru/',
-        iconPath: require('../../../../res/img/links/site.jpg'),
-        name: 'EasyStars',
-    },
-    {
-        url: 'https://qtconnect.ru/',
-        iconPath: require('../../../../res/img/links/connect.png'),
-        name: 'Connect',
     },
 ];
 
