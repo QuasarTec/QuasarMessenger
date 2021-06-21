@@ -4,7 +4,7 @@ module.exports = {
         "stylelint-scss",
     ],
     "rules": {
-        "indentation": 4,
+        "indentation": 2,
         "comment-empty-line-before": null,
         "declaration-empty-line-before": null,
         "length-zero-no-unit": null,

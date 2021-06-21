@@ -177,6 +177,34 @@ export default class VK extends Component<Props, State> {
         this.loadChats(chats[0], chatId ? chatOffset : 0);
     }
 
+    removeClient = async (index) => {
+        const clone = { ...this.state };
+        const { auth, vk } = clone;
+
+        await fetch('https://matrix.easy-stars.ru/api/db/remove', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                cookie: auth[index],
+            }),
+        });
+
+        auth.splice(index, 1);
+        vk.splice(index, 1);
+
+        const updated: Partial<State> = {
+            auth,
+            vk,
+        };
+
+        if (auth.length === 0) updated.addNewAccount = true;
+        else updated.accountIndex = 0;
+
+        this.setState(updated as State);
+    }
+
     setClient = (client, cookie) => {
         const { name } = this.props;
         const clone = { ...this.state };
@@ -242,7 +270,7 @@ export default class VK extends Component<Props, State> {
     }
 
     render() {
-        const { createClient, changeProp, loadChats, getInitialData, state, props } = this;
+        const { createClient, changeProp, loadChats, getInitialData, removeClient, state, props } = this;
         const { addNewAccount, accountIndex, chatId, chatOffset, auth } = state;
         const { name } = props;
 
@@ -260,7 +288,8 @@ export default class VK extends Component<Props, State> {
                         createClient={ createClient }
                         changeIndex={ changeProp }
                         cookie={ auth[accountIndex] }
-                        currentIndex={ accountIndex } />
+                        currentIndex={ accountIndex }
+                        deleteAccount={ removeClient } />
 
                     <Chats chats={ mail }
                         activity={ activity }

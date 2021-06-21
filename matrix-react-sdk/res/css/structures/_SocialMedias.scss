@@ -102,6 +102,18 @@
     padding: 10px;
     background-color: rgba(245, 245, 245, 0.90);
 
+    .accountContextMenu {
+        position: absolute;
+
+        button {
+            padding: 9px 11px;
+            border: 1px black solid;
+            border-radius: 5px;
+            color: white;
+            background: #f7503e;
+        }
+    }
+
     .mx_Account{
         display: flex;
         align-items: center;
@@ -119,7 +131,7 @@
     .mx_Active{
         padding: 7px;
         border-radius: 10px;
-        background-color: rgba(232, 232, 232, 0.77);
+        background-color: #bcd3e3;
 
         .mx_Avatar{
             width: 40px;
@@ -133,7 +145,7 @@
         width: 45px;
         height: 45px;
         border-radius: 50%;
-        background-color: rgba(232, 232, 232, 0.77);
+        background-color: #bcd3e3;
         transition: 300ms;
 
         img{

@@ -1,19 +1,19 @@
-import React from 'react'
-import api_domain from '../../domains/api'
+import React from 'react';
+import api_domain from '../../domains/api';
 
-export default function MessageComposer(props){
+export default function MessageComposer(props) {
     const handleSend = e => {
         const { key, target } = e;
         const { value } = target;
 
-        if(key === 'Enter' && value !== ''){
+        if (key === 'Enter' && value !== '') {
             const { hash, cur, cookie } = props;
             const { _af, peerId, groupId } = cur;
 
             fetch(`${api_domain}/vk/mail/send`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
                     _af,
@@ -21,19 +21,19 @@ export default function MessageComposer(props){
                     to: peerId,
                     from: groupId ? '' : 'dialog',
                     message: value,
-                    cookie
-                })
+                    cookie,
+                }),
             });
 
             target.value = '';
         }
-    }
+    };
 
-    return(
-        <input className='mx_MessageComposer' 
-               type='text' 
+    return (
+        <input className='mx_MessageComposer'
+               type='text'
                onKeyDown={ handleSend }
-               name='message' 
+               name='message'
                placeholder='Сообщение' />
-    )
+    );
 }
