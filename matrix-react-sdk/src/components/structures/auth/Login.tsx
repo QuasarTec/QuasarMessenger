@@ -164,7 +164,7 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
 
     onPasswordLogin = async (username, phoneCountry, phoneNumber, password) => {
         // const response = await EasyStars.postData('quasar/user/auth', username, password);
-        
+
         // if(response.status === 'error'){
         //     return this.setState({
         //         busy: false,
@@ -208,71 +208,71 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
         });
 
         this.loginLogic.loginViaPassword(username, phoneCountry, phoneNumber, password)
-        .then(async(data) => {
-            localStorage.setItem('username', username);
-            
-            this.setState({serverIsAlive: true}); // it must be, we logged in.
-            this.props.onLoggedIn(data, password);
-        }, (error) => {
-            if (this.unmounted) {
-                return;
-            }
-            let errorText;
+            .then(async (data) => {
+                localStorage.setItem('username', username);
 
-            // Some error strings only apply for logging in
-            const usingEmail = username.indexOf("@") > 0;
-            if (error.httpStatus === 400 && usingEmail) {
-                errorText = _t('This homeserver does not support login using email address.');
-            } else if (error.errcode === 'M_RESOURCE_LIMIT_EXCEEDED') {
-                const errorTop = messageForResourceLimitError(
-                    error.data.limit_type,
-                    error.data.admin_contact,
-                    {
+                this.setState({serverIsAlive: true}); // it must be, we logged in.
+                this.props.onLoggedIn(data, password);
+            }, (error) => {
+                if (this.unmounted) {
+                    return;
+                }
+                let errorText;
+
+                // Some error strings only apply for logging in
+                const usingEmail = username.indexOf("@") > 0;
+                if (error.httpStatus === 400 && usingEmail) {
+                    errorText = _t('This homeserver does not support login using email address.');
+                } else if (error.errcode === 'M_RESOURCE_LIMIT_EXCEEDED') {
+                    const errorTop = messageForResourceLimitError(
+                        error.data.limit_type,
+                        error.data.admin_contact,
+                        {
                         'monthly_active_user': _td(
                             "This homeserver has hit its Monthly Active User limit.",
                         ),
                         '': _td(
                             "This homeserver has exceeded one of its resource limits.",
                         ),
-                    },
-                );
-                const errorDetail = messageForResourceLimitError(
-                    error.data.limit_type,
-                    error.data.admin_contact,
-                    {
+                        },
+                    );
+                    const errorDetail = messageForResourceLimitError(
+                        error.data.limit_type,
+                        error.data.admin_contact,
+                        {
                         '': _td("Please <a>contact your service administrator</a> to continue using this service."),
-                    },
-                );
-                errorText = (
-                    <div>
-                        <div>{errorTop}</div>
-                        <div className="mx_Login_smallError">{errorDetail}</div>
-                    </div>
-                );
-            } else if (error.httpStatus === 401 || error.httpStatus === 403) {
-                if (error.errcode === 'M_USER_DEACTIVATED') {
-                    errorText = _t('This account has been deactivated.');
-                } else if (SdkConfig.get()['disable_custom_urls']) {
+                        },
+                    );
                     errorText = (
                         <div>
-                            <div>{ _t('Incorrect username and/or password.') }</div>
-                            <div className="mx_Login_smallError">
-                                {_t(
-                                    'Please note you are logging into the %(hs)s server, not matrix.org.',
-                                    {hs: this.props.serverConfig.hsName},
-                                )}
-                            </div>
+                            <div>{errorTop}</div>
+                            <div className="mx_Login_smallError">{errorDetail}</div>
                         </div>
                     );
+                } else if (error.httpStatus === 401 || error.httpStatus === 403) {
+                    if (error.errcode === 'M_USER_DEACTIVATED') {
+                        errorText = _t('This account has been deactivated.');
+                    } else if (SdkConfig.get()['disable_custom_urls']) {
+                        errorText = (
+                            <div>
+                                <div>{ _t('Incorrect username and/or password.') }</div>
+                                <div className="mx_Login_smallError">
+                                    {_t(
+                                        'Please note you are logging into the %(hs)s server, not matrix.org.',
+                                        {hs: this.props.serverConfig.hsName},
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    } else {
+                        errorText = _t('Something went wrong. Contact the tech support.');
+                    }
                 } else {
-                    errorText = _t('Something went wrong. Contact the tech support.');
-                }
-            } else {
                 // other errors, not specific to doing a password login
-                errorText = this.errorTextFromError(error);
-            }
+                    errorText = this.errorTextFromError(error);
+                }
 
-            this.setState({
+                this.setState({
                 busy: false,
                 busyLoggingIn: false,
                 errorText: errorText,
@@ -281,8 +281,8 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
                 // mentions this (although the bug is for UI auth which is not this)
                 // We treat both as an incorrect password
                 loginIncorrect: error.httpStatus === 401 || error.httpStatus === 403,
+                });
             });
-        });
     };
 
     onUsernameChanged = username => {
@@ -589,8 +589,7 @@ export default class LoginComponent extends React.PureComponent<IProps, IState> 
                     {_t("If you've joined lots of rooms, this might take a while")}
                 </div> }
             </div>;
-        } 
-        else if (SettingsStore.getValue(UIFeature.Registration)) {
+        } else if (SettingsStore.getValue(UIFeature.Registration)) {
             footer = (
                 <span className="mx_AuthBody_changeFlow">
                     {_t("New? <a>Create account</a>", {}, {
