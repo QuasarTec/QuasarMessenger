@@ -24,7 +24,7 @@ export default function AutomatizationLaunch(_props) {
 
             if (result.Stars[id] || result.Stars[`${id} Business`] || result.Stars[`${id}Soft`] || dev) {
                 window.ipcRenderer.send('launch_app', id);
-            } else {
+            } else if (id === 'VkConnect') {
                 const connectRes = await fetch(`https://matrix.easy-stars.ru/bot/users/check-on-payed`, {
                     method: 'POST',
                     headers: {
