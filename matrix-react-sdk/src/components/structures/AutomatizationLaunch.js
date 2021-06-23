@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 
 export default function AutomatizationLaunch(_props) {
     const apps = ['VkLead', 'Vkreg', 'InstaLead', 'InstaCom', 'SkypeLead', 'SkypeReg', 'TeleLead', 'VkConnect'];
-    const [Error, setError] = useState(undefined);
+    const [error, setError] = useState(undefined);
 
     const handler = async (e) => {
         const { id } = e.target;
@@ -22,12 +21,22 @@ export default function AutomatizationLaunch(_props) {
 
         if (status === 'successful') {
             const dev = false;
+
             if (result.Stars[id] || result.Stars[`${id} Business`] || result.Stars[`${id}Soft`] || dev) {
                 window.ipcRenderer.send('launch_app', id);
             } else {
-                const connect_payed = await axios.get(`https://matrix.easy-stars.ru/bot/users/check-on-payed?${query}`);
+                const connectRes = await fetch(`https://matrix.easy-stars.ru/bot/users/check-on-payed`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: localStorage.getItem('username'),
+                    }),
+                });
+                const isConnectPayed = await connectRes.json();
 
-                if (connect_payed) {
+                if (isConnectPayed.payed) {
                     window.ipcRenderer.send('launch_app', id);
                 } else {
                     setError(
@@ -50,10 +59,10 @@ export default function AutomatizationLaunch(_props) {
 
     return (
         <div className="mx_SocialMediaChoice">
-            { Error &&
+            { error &&
                 <div className="mx_StarError">
                     <div className="mx_Error">
-                        {Error}
+                        {error}
                         <button onClick={ () => setError(undefined) }>OK</button>
                     </div>
                 </div>
