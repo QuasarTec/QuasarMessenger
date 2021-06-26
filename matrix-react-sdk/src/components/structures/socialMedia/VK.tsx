@@ -151,6 +151,7 @@ export default class VK extends Component<Props, State> {
                             'Content-Type': 'application/json',
                         },
                         body: JSON.stringify({
+                            name: 'vk',
                             cookie,
                         }),
                     });
@@ -188,6 +189,7 @@ export default class VK extends Component<Props, State> {
             },
             body: JSON.stringify({
                 cookie: auth[index],
+                name: 'vk',
             }),
         });
 
