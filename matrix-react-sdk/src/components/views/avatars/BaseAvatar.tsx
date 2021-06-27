@@ -40,6 +40,7 @@ interface IProps {
     onClick?: React.MouseEventHandler;
     inputRef?: React.RefObject<HTMLImageElement & HTMLSpanElement>;
     className?: string;
+    isBrandRoom?: boolean
 }
 
 const calculateUrls = (url, urls) => {
@@ -102,6 +103,7 @@ const BaseAvatar = (props: IProps) => {
         onClick,
         inputRef,
         className,
+        isBrandRoom,
         ...otherProps
     } = props;
 
@@ -119,13 +121,17 @@ const BaseAvatar = (props: IProps) => {
                     lineHeight: toPx(height),
                 }}
             >
-                { initialLetter }
+                { isBrandRoom ? 'Q' : initialLetter }
             </span>
         );
         const imgNode = (
             <img
                 className="mx_BaseAvatar_image"
-                src={AvatarLogic.defaultAvatarUrlForString(idName || name)}
+                src={
+                    isBrandRoom
+                    ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAARUlEQVRYhe3OMREAIAAAIVNZ0n7W0RTeOzCwM+ba52ejDggK1gFBwTogKFgHBAXrgKBgHRAUrAOCgnVAULAOCArWAcHXLrnrKnHDJPjJAAAAAElFTkSuQmCC' 
+                    : AvatarLogic.defaultAvatarUrlForString(idName || name)
+                }
                 alt=""
                 title={title}
                 onError={onError}

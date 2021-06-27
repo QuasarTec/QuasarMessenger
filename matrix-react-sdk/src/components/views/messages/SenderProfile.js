@@ -21,6 +21,7 @@ import FlairStore from '../../../stores/FlairStore';
 import { _t } from '../../../languageHandler';
 import {getUserNameColorClass} from '../../../utils/FormattingUtils';
 import MatrixClientContext from "../../../contexts/MatrixClientContext";
+import SdkConfig from "../../../SdkConfig.ts";
 
 export default class SenderProfile extends React.Component {
     static propTypes = {
@@ -92,6 +93,9 @@ export default class SenderProfile extends React.Component {
         const name = mxEvent.sender ? mxEvent.sender.name : mxEvent.getSender();
         const {msgtype} = mxEvent.getContent();
 
+        const brandRoomId = SdkConfig.get()?.['brand_room_id'];
+        const roomId = this.props.mxEvent.getRoomId();
+
         if (msgtype === 'm.emote') {
             return <span />; // emote message must include the name so don't duplicate it
         }
@@ -113,7 +117,7 @@ export default class SenderProfile extends React.Component {
         // Name + flair
         const nameFlair = <span>
             <span className={`mx_SenderProfile_name ${colorClass}`}>
-                { nameElem }
+                { brandRoomId === roomId ? 'Quasar Technology' : nameElem }
             </span>
             { flair }
         </span>;

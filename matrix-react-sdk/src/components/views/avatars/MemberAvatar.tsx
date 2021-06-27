@@ -22,6 +22,7 @@ import dis from "../../../dispatcher/dispatcher";
 import {Action} from "../../../dispatcher/actions";
 import {MatrixClientPeg} from "../../../MatrixClientPeg";
 import BaseAvatar from "./BaseAvatar";
+import SdkConfig from "../../../SdkConfig";
 
 interface IProps extends Omit<React.ComponentProps<typeof BaseAvatar>, "name" | "idName" | "url"> {
     member: RoomMember;
@@ -34,6 +35,7 @@ interface IProps extends Omit<React.ComponentProps<typeof BaseAvatar>, "name" | 
     // Whether the onClick of the avatar should be overriden to dispatch `Action.ViewUser`
     viewUserOnClick?: boolean;
     title?: string;
+    mxEvent?: any, // event whose sender we're showing
 }
 
 interface IState {
@@ -88,6 +90,13 @@ export default class MemberAvatar extends React.Component<IProps, IState> {
         let {member, fallbackUserId, onClick, viewUserOnClick, ...otherProps} = this.props;
         const userId = member ? member.userId : fallbackUserId;
 
+        const brandRoomId = SdkConfig.get()?.['brand_room_id'];
+        let roomId;
+
+        if (this.props.mxEvent) {
+            roomId = this.props.mxEvent.getRoomId();
+        }
+
         if (viewUserOnClick) {
             onClick = () => {
                 dis.dispatch({
@@ -99,6 +108,7 @@ export default class MemberAvatar extends React.Component<IProps, IState> {
 
         return (
             <BaseAvatar {...otherProps} name={this.state.name} title={this.state.title}
+                isBrandRoom={this.props.mxEvent && brandRoomId === roomId}
                 idName={userId} url={this.state.imageUrl} onClick={onClick} />
         );
     }

@@ -759,6 +759,7 @@ export default class EventTile extends React.Component {
                     <MemberAvatar member={member}
                         width={avatarSize} height={avatarSize}
                         viewUserOnClick={true}
+                        mxEvent={this.props.mxEvent}
                     />
                 </div>
             );
