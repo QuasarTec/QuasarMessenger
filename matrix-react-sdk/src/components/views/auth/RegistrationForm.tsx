@@ -452,14 +452,6 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
         />;
     }
 
-    // getReferralQuery(){
-    //     const queryString = window.location.search;
-    //     const urlParams = new URLSearchParams(queryString);
-    //     const referral = urlParams.get('referral');
-
-    //     return referral
-    // } 
-
     renderPasswordConfirm() {
         return <Field
             id="mx_RegistrationForm_passwordConfirm"
