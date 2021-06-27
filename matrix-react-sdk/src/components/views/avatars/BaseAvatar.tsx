@@ -121,16 +121,17 @@ const BaseAvatar = (props: IProps) => {
                     lineHeight: toPx(height),
                 }}
             >
-                { isBrandRoom ? 'Q' : initialLetter }
+                { isBrandRoom ? '' : initialLetter }
             </span>
         );
+
         const imgNode = (
             <img
                 className="mx_BaseAvatar_image"
                 src={
                     isBrandRoom
-                    ? 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAARUlEQVRYhe3OMREAIAAAIVNZ0n7W0RTeOzCwM+ba52ejDggK1gFBwTogKFgHBAXrgKBgHRAUrAOCgnVAULAOCArWAcHXLrnrKnHDJPjJAAAAAElFTkSuQmCC' 
-                    : AvatarLogic.defaultAvatarUrlForString(idName || name)
+                        ? require('../../../../res/img/quasar/pfp.jpg')
+                        : AvatarLogic.defaultAvatarUrlForString(idName || name)
                 }
                 alt=""
                 title={title}
