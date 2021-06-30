@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import stringify from '../../modules/stringify';
 
 export default function AutomatizationLaunch(_props) {
     const apps = ['VkLead', 'Vkreg', 'InstaLead', 'InstaCom', 'SkypeLead', 'SkypeReg', 'TeleLead', 'VkConnect'];
@@ -82,15 +83,3 @@ export default function AutomatizationLaunch(_props) {
         </div>
     );
 }
-
-const stringify = data => {
-    const result = [];
-
-    for (const prop in data) {
-        if (data.hasOwnProperty(prop)) {
-            result.push(encodeURIComponent(prop) + "=" + encodeURIComponent(data[prop]));
-        }
-    }
-
-    return result.join("&");
-};

@@ -539,11 +539,10 @@ export class MatrixCall extends EventEmitter {
                 const audioConstraints = getUserMediaVideoContraints(CallType.Voice);
                 const mediaStream = await navigator.mediaDevices.getUserMedia(audioConstraints);
 
-                const canvas = document.getElementById('blackCamera');
-                // @ts-ignore
+                const canvas = document.getElementById('blackCamera') as HTMLCanvasElement;
                 const ctx = canvas.getContext("2d");
+
                 ctx.fillStyle = "black";
-                // @ts-ignore
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 // @ts-ignore
                 const stream = canvas.captureStream(25);

@@ -165,22 +165,22 @@ export default class Login {
         };
 
         let originalLoginError = null;
-        
+
         return sendLoginRequest(this.hsUrl, this.isUrl, 'm.login.password', loginParams)
-        .catch((error) => {
-            originalLoginError = error;
-            if (error.httpStatus === 403) {
-                if (this.fallbackHsUrl) {
-                    return tryFallbackHs(originalLoginError);
+            .catch((error) => {
+                originalLoginError = error;
+                if (error.httpStatus === 403) {
+                    if (this.fallbackHsUrl) {
+                        return tryFallbackHs(originalLoginError);
+                    }
                 }
-            }
-            
-            throw originalLoginError;
-        })
-        .catch((error) => {
-            console.log("Login failed", error);
-            throw error;
-        });
+
+                throw originalLoginError;
+            })
+            .catch((error) => {
+                console.log("Login failed", error);
+                throw error;
+            });
     }
 }
 

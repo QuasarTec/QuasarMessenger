@@ -30,6 +30,7 @@ import PassphraseField from "./PassphraseField";
 import CountlyAnalytics from "../../../CountlyAnalytics";
 import Field from '../elements/Field';
 import RegistrationEmailPromptDialog from '../dialogs/RegistrationEmailPromptDialog';
+import stringify from '../../../modules/stringify';
 
 enum RegistrationField {
     Email = "field_email",
@@ -37,6 +38,7 @@ enum RegistrationField {
     Username = "field_username",
     Password = "field_password",
     PasswordConfirm = "field_password_confirm",
+    Referral = "field_referral"
 }
 
 const PASSWORD_MIN_SCORE = 3; // safely unguessable: moderate protection from offline slow-hash scenario.
@@ -75,6 +77,9 @@ interface IState {
     password: string;
     passwordConfirm: string;
     passwordComplexity?: number;
+    referral: string,
+    registerEmail: string,
+    errors: string[]
 }
 
 /*
@@ -98,15 +103,67 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
             password: this.props.defaultPassword || "",
             passwordConfirm: this.props.defaultPassword || "",
             passwordComplexity: null,
+            referral: '',
+            registerEmail: '',
+            errors: [],
         };
 
         CountlyAnalytics.instance.track("onboarding_registration_begin");
     }
 
-    private onSubmit = async ev => {
+    private tryToRegister = async (ev) => {
         ev.preventDefault();
         ev.persist();
 
+        const isRegistered = await this.quasarRegister();
+
+        if (isRegistered) {
+            await this.matrixRegister(ev);
+        }
+    }
+
+    private quasarRegister = async () => {
+        const { registerEmail: email, username: rawUsername, password, referral } = this.state;
+
+        const username = rawUsername[0] === '@' ? rawUsername : '@' + rawUsername;
+
+        const body: any = { username, email, password }
+        if (referral) body.referral = referral;
+
+        const query = stringify(body);
+
+        const res = await fetch(`https://api.easy-stars.ru/api/query/user/register`, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/x-www-form-urlencoded',
+            },
+            body: query,
+        });
+
+        const result = await res.json();
+
+        if (result.status === 'error') {
+            const response = result.response_text;
+            const keys = Object.keys(response);
+
+            const resErrors: string[] = [];
+
+            for (const key of keys) {
+                response[key].map((err: string) => {
+                    resErrors.push(err);
+                });
+            }
+
+            this.setState({
+                errors: resErrors,
+            });
+            return false;
+        }
+
+        return true;
+    }
+
+    private matrixRegister = async ev => {
         if (!this.props.canSubmit) return;
 
         const allFieldsValid = await this.verifyFieldsBeforeSubmit();
@@ -129,14 +186,12 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
                         }
                     },
                 });
-            } 
-            else {
+            } else {
                 // user can't set an e-mail so don't prompt them to
                 this.doSubmit(ev);
                 return;
             }
-        } 
-        else {
+        } else {
             this.doSubmit(ev);
         }
     };
@@ -247,7 +302,13 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
 
     private onEmailChange = ev => {
         this.setState({
-            email: ev.target.value,
+            registerEmail: ev.target.value,
+        });
+    };
+
+    private onReferralChange = ev => {
+        this.setState({
+            referral: ev.target.value,
         });
     };
 
@@ -256,6 +317,24 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
         this.markFieldValid(RegistrationField.Email, result.valid);
         return result;
     };
+
+    private onReferralValidate = async fieldState => {
+        const result = await this.validateReferralRules(fieldState);
+        this.markFieldValid(RegistrationField.Referral, result.valid);
+        return result;
+    };
+
+    private validateReferralRules = withValidation({
+        description: () => "Используйте его, чтобы указать ник вашего пригласителя",
+        hideDescriptionIfValid: true,
+        rules: [
+            {
+                key: "referral",
+                test: ({ value }) => !value || value[0] === '@',
+                invalid: () => "Ник должен начинаться с \"@\"",
+            },
+        ],
+    });
 
     private validateEmailRules = withValidation({
         description: () => _t("Use an email address to recover your account"),
@@ -421,21 +500,25 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
     }
 
     private renderEmail() {
-        if (!this.showEmail()) {
-            return null;
-        }
-        const emailPlaceholder = this.authStepIsRequired('m.login.email.identity') ?
-            _t("Email") :
-            _t("Email (optional)");
+        const emailPlaceholder = _t("Email")
         return <Field
             ref={field => this[RegistrationField.Email] = field}
             type="text"
             label={emailPlaceholder}
-            value={this.state.email}
+            value={this.state.registerEmail}
             onChange={this.onEmailChange}
             onValidate={this.onEmailValidate}
-            onFocus={() => CountlyAnalytics.instance.track("onboarding_registration_email_focus")}
-            onBlur={() => CountlyAnalytics.instance.track("onboarding_registration_email_blur")}
+        />;
+    }
+
+    private renderReferral() {
+        return <Field
+            ref={field => this[RegistrationField.Referral] = field}
+            type="text"
+            label={'Telegram ник вашего реферала'}
+            value={this.state.referral}
+            onValidate={this.onReferralValidate}
+            onChange={this.onReferralChange}
         />;
     }
 
@@ -498,8 +581,8 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
             ref={field => this[RegistrationField.Username] = field}
             type="text"
             autoFocus={true}
-            label={_t("Username")}
-            placeholder={_t("Username").toLocaleLowerCase()}
+            label={"Ваш telegram ник без \"@\""}
+            placeholder={"Ваш telegram ник без \"@\""}
             value={this.state.username}
             onChange={this.onUsernameChange}
             onValidate={this.onUsernameValidate}
@@ -534,9 +617,11 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
             }
         }
 
+        const { errors } = this.state;
+
         return (
             <div>
-                <form onSubmit={this.onSubmit}>
+                <form onSubmit={this.tryToRegister}>
                     <div className="mx_AuthBody_fieldRow">
                         {this.renderUsername()}
                     </div>
@@ -548,7 +633,13 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
                         {this.renderEmail()}
                         {this.renderPhoneNumber()}
                     </div>
+                    <div className="mx_AuthBody_fieldRow">
+                        {this.renderReferral()}
+                    </div>
                     { emailHelperText }
+                    { errors.length > 0 && errors.map(error => (
+                        <p className="mx_Login_error" key={error}>{ error }</p>
+                    )) }
                     { registerButton }
                 </form>
             </div>
