@@ -118,6 +118,7 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
         const isRegistered = await this.quasarRegister();
 
         if (isRegistered) {
+            localStorage.setItem('username', this.state.username);
             await this.matrixRegister(ev);
         }
     }
@@ -141,6 +142,14 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
         });
 
         const result = await res.json();
+
+        if (result.status === 'error'
+            && (Object.keys(result.response_text).length === 1 || Object.keys(result.response_text).length === 2)) {
+            if ( result.response_text?.username?.[0] === 'Пользователь с таким логином уже зарегистрирован'
+                || result.response_text?.email?.[0] === 'Пользователь с такой электронной почтой уже зарегистрирован') {
+                return true;
+            }
+        }
 
         if (result.status === 'error') {
             const response = result.response_text;
