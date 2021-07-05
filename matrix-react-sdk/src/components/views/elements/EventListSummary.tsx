@@ -67,11 +67,11 @@ const EventListSummary: React.FC<IProps> = ({
 
     // If we are only given few events then just pass them through
     if (events.length < threshold) {
-        return brandRoomId !== currentRoomId  
-        ? (<div className="mx_EventListSummary" data-scroll-tokens={eventIds}>
+        return brandRoomId !== currentRoomId
+            ? (<div className="mx_EventListSummary" data-scroll-tokens={eventIds}>
                 { children }
-            </div>) 
-        : <div></div>;
+            </div>)
+            : <div></div>;
     }
 
     let body;
@@ -96,14 +96,14 @@ const EventListSummary: React.FC<IProps> = ({
         );
     }
 
-    return brandRoomId !== currentRoomId 
-    ? (<li className="mx_EventListSummary" data-scroll-tokens={eventIds}>
+    return brandRoomId !== currentRoomId
+        ? (<li className="mx_EventListSummary" data-scroll-tokens={eventIds}>
             <AccessibleButton className="mx_EventListSummary_toggle" onClick={toggleExpanded} aria-expanded={expanded}>
                 { expanded ? _t('collapse') : _t('expand') }
             </AccessibleButton>
             { body }
         </li>)
-    : <div></div>;
+        : <div></div>;
 };
 
 export default EventListSummary;
