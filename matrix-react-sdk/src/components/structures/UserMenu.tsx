@@ -52,6 +52,7 @@ import ErrorDialog from "../views/dialogs/ErrorDialog";
 import EditCommunityPrototypeDialog from "../views/dialogs/EditCommunityPrototypeDialog";
 import {UIFeature} from "../../settings/UIFeature";
 import DonationMenu from './DonationMenu'
+import EasyStars from '../../EasyStars'
 
 interface IProps {
     isMinimized: boolean;
@@ -86,7 +87,7 @@ export default class UserMenu extends React.Component<IProps, IState> {
             donationWarning: '',
             isPasswordInputEnabled: false,
             currency: 'RUB',
-            balance: null
+            balance: null,
         };
 
         OwnProfileStore.instance.on(UPDATE_EVENT, this.onProfileUpdate);
@@ -97,17 +98,18 @@ export default class UserMenu extends React.Component<IProps, IState> {
     }
 
     public async componentDidMount() {
+        EasyStars.logOutEmptyStorage();
         // if(!EasyStars.logOutEmptyStorage()){
         //     const { username } = EasyStars.getDataFromStorage();
         //     const password = EasyStars.decryptPassword();
 
         //     const userData = await EasyStars.postData('quasar/user/get_info', username, password);
         //     const { rub, usd } = userData.response.balance;
-            
+
         //     this.setState(
-        //         { balance: 
+        //         { balance:
         //             { rub, usd }
-        //         }, 
+        //         },
         //         () => this.props.showRoomList()
         //     );
         // }
@@ -120,12 +122,12 @@ export default class UserMenu extends React.Component<IProps, IState> {
     public componentDidUpdate(_prevProps, prevState) {
         const { donationWarning, isPasswordInputEnabled, currency } = this.state;
 
-        if(this.state.isDonationOpened || donationWarning || currency !== prevState.currency){
+        if (this.state.isDonationOpened || donationWarning || currency !== prevState.currency) {
             DonationMenu(this.setStateByName, donationWarning, isPasswordInputEnabled, currency);
-            
+
             this.setState({
                 isDonationOpened: false,
-                donationWarning: ''
+                donationWarning: '',
             });
         }
     }
@@ -625,9 +627,9 @@ export default class UserMenu extends React.Component<IProps, IState> {
                     </div>
                 </ContextMenuButton>
 
-                { balance && 
+                { balance &&
                     Object.keys(balance).map(key => {
-                        return(
+                        return (
                             <div className="mx_UserMenu_row mx_UserMenu_userBalance" key={ key }>
                                 <span>
                                     { balance[key] + ' ' + key.toUpperCase() }
@@ -636,10 +638,10 @@ export default class UserMenu extends React.Component<IProps, IState> {
                         )
                     })
                 }
-                
+
                 <div className="mx_UserMenu_row">
-                    <button className="mx_donateButton" 
-                            onClick={ this.onDonationButtonClick }
+                    <button className="mx_donateButton"
+                        onClick={ this.onDonationButtonClick }
                     >
                         Пополнить баланс
                     </button>

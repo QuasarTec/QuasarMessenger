@@ -31,7 +31,7 @@ export const DEFAULTS: ConfigOptions = {
     // Jitsi conference options
     jitsi: {
         // Default conference domain
-        preferredDomain: "meet.easy-stars.ru",
+        preferredDomain: "qtconnect.ru",
     },
     desktopBuilds: {
         available: true,

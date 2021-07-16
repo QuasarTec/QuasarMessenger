@@ -102,8 +102,8 @@ export class ElementWidget extends Widget {
         }
         let domain = super.rawData['domain'];
         if (domain === undefined) {
-            // v1 widgets default to meet.easy-stars.ru regardless of user settings
-            domain = "meet.easy-stars.ru";
+            // v1 widgets default to qtconnect.ru regardless of user settings
+            domain = "qtconnect.ru";
         }
 
         let theme = new ThemeWatcher().getEffectiveTheme();

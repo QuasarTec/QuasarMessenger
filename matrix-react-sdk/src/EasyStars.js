@@ -1,64 +1,64 @@
 import dis from "./dispatcher/dispatcher";
-import crypto from 'crypto-js'
+import crypto from 'crypto-js';
 
-async function postData(address, username, password, data = {}){
+async function postData(address, username, password, data = {}) {
     const parsedUsername = '@' + username;
 
     const body = {
         SECRET_KEY: 'DH3&#!@aidaoi1238^@&%daskl^53h12313^%#%@4112dhasdf12312&^31',
         username: parsedUsername,
-        password
+        password,
     };
 
-    for(let key in data){
+    for (const key in data) {
         body[key] = data[key];
     }
 
     const rawData = new URLSearchParams(Object.keys(body).map(key=>[key, body[key]]));
 
-    const easyStarsAuth = await fetch(`https://api.easy-stars.ru/${address}`, {
+    const easyStarsAuth = await fetch(`https://api.quasaria.ru/${address}`, {
         method: 'POST',
         body: rawData.toString(),
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-            'Accept': 'application/json'
-        }
+            'Accept': 'application/json',
+        },
     });
 
     const response = await easyStarsAuth.json();
-    return response
+    return response;
 }
 
-function getDataFromStorage(){
+function getDataFromStorage() {
     const username = localStorage.getItem('username');
     const hash = window.localStorage.getItem('hash');
     const key = window.localStorage.getItem('uuid');
 
     return {
-        username, 
-        hash, 
-        key
-    }
+        username,
+        hash,
+        key,
+    };
 }
 
-function decryptPassword(){
+function decryptPassword() {
     const { hash, key } = getDataFromStorage();
 
     const bytes = crypto.AES.decrypt(hash, key);
     const decrypted = bytes.toString(crypto.enc.Utf8);
 
-    return decrypted
+    return decrypted;
 }
 
-function logOutEmptyStorage(){
-    const { hash, key, username } = getDataFromStorage();
+function logOutEmptyStorage() {
+    const { username } = getDataFromStorage();
 
-    if(!hash || !key || !username){
+    if (!username) {
         dis.dispatch({action: 'logout'});
-        return true
+        return true;
     }
 
-    return false
+    return false;
 }
 
-export default { postData, getDataFromStorage, logOutEmptyStorage, decryptPassword }
+export default { postData, getDataFromStorage, logOutEmptyStorage, decryptPassword };

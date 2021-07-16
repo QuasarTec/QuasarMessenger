@@ -684,7 +684,7 @@ export default class CallHandler {
             return;
         }
 
-        const jitsiDomain = 'meet.easy-stars.ru';
+        const jitsiDomain = 'qtconnect.ru';
         const jitsiAuth = await Jitsi.getInstance().getJitsiAuth();
         let confId;
         if (jitsiAuth === 'openidtoken-jwt') {

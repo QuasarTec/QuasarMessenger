@@ -15,7 +15,7 @@ export default function AutomatizationLaunch(_props) {
             by_text: localStorage.getItem('username'),
         });
 
-        const res = await fetch(`https://api.easy-stars.ru/api/query/stars?${query}`);
+        const res = await fetch(`https://api.quasaria.ru/api/query/stars?${query}`);
         const stars = await res.json();
 
         const { result, status } = stars;

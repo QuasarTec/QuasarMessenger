@@ -17,7 +17,7 @@ const buttons: Button[] = [
         name: 'google',
     },
     {
-        url: 'https://easy-stars.ru/',
+        url: 'https://quasaria.ru/',
         iconPath: require('../../../../res/img/links/site.jpg'),
         name: 'EasyStars',
     },

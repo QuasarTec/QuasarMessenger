@@ -133,7 +133,7 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
 
         const query = stringify(body);
 
-        const res = await fetch(`https://api.easy-stars.ru/api/query/user/register`, {
+        const res = await fetch(`https://api.quasaria.ru/api/query/user/register`, {
             method: 'POST',
             headers: {
                 'Content-type': 'application/x-www-form-urlencoded',
