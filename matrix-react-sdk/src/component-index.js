@@ -62,6 +62,8 @@ import structures$browser$DefaultLinks from './components/structures/browser/Def
 structures$browser$DefaultLinks && (components['structures.browser.DefaultLinks'] = structures$browser$DefaultLinks);
 import structures$browser$Frame from './components/structures/browser/Frame';
 structures$browser$Frame && (components['structures.browser.Frame'] = structures$browser$Frame);
+import structures$browser$NavigationPanel from './components/structures/browser/NavigationPanel';
+structures$browser$NavigationPanel && (components['structures.browser.NavigationPanel'] = structures$browser$NavigationPanel);
 import structures$browser$SearchBar from './components/structures/browser/SearchBar';
 structures$browser$SearchBar && (components['structures.browser.SearchBar'] = structures$browser$SearchBar);
 import structures$socialMedia$Telegram from './components/structures/socialMedia/Telegram';

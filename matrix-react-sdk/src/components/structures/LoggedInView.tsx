@@ -122,7 +122,8 @@ interface IState {
     usageLimitEventContent?: IUsageLimit;
     useCompactLayout: boolean;
     shouldAuthOpen: boolean;
-    defaultBrowserLink: string
+    defaultBrowserLink: string,
+    defaultViewLink: string
 }
 
 /**
@@ -167,6 +168,7 @@ class LoggedInView extends React.Component<IProps, IState> {
             useCompactLayout: SettingsStore.getValue('useCompactLayout'),
             shouldAuthOpen: true,
             defaultBrowserLink: 'https://www.google.com/',
+            defaultViewLink: 'https://www.google.com/',
         };
 
         // stash the MatrixClient in case we log out before we are unmounted
@@ -618,6 +620,13 @@ class LoggedInView extends React.Component<IProps, IState> {
     setDefaultBrowserLink = (link: string) => {
         this.setState({
             defaultBrowserLink: link,
+            defaultViewLink: link,
+        });
+    }
+
+    setVisibleLink = (link: string) => {
+        this.setState({
+          defaultViewLink: link,
         });
     }
 
@@ -695,6 +704,8 @@ class LoggedInView extends React.Component<IProps, IState> {
                 pageElement = (
                     <Browser
                         browserLink={this.state.defaultBrowserLink}
+                        visibleLink={this.state.defaultViewLink}
+                        setVisibleLink={this.setVisibleLink}
                         setBrowserLink={this.setDefaultBrowserLink}
                     />
                 );
