@@ -169,6 +169,7 @@ export default class RegistrationForm extends React.PureComponent<IProps, IState
             return false;
         }
 
+        localStorage.setItem('username', username);
         return true;
     }
 
